@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Marketing — Cerimônias</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0f0d;
+    --bg2: #161710;
+    --bg3: #1d1f18;
+    --card: #1a1c16;
+    --border: rgba(99,255,198,0.12);
+    --border2: rgba(99,255,198,0.22);
+    --gold: #63ffc6;
+    --gold2: #7fffdb;
+    --sage: #7a9e6e;
+    --sage2: #9ab88a;
+    --earth: #8b6b4a;
+    --text: #e8e4d8;
+    --text2: #a09880;
+    --text3: #6a6450;
+    --accent: #63ffc6;
+    --danger: #c4624a;
+    --info: #5a8fa0;
+    --success: #6a9e5a;
+    --warn: #c4904a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* Layout */
+  .app { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    padding: 28px 0;
+  }
+
+  .sidebar-logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+  }
+  .sidebar-logo .logo-icon {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    color: var(--gold);
+    letter-spacing: .03em;
+    line-height: 1.2;
+  }
+  .sidebar-logo .logo-sub {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    padding: 0 12px;
+    margin-bottom: 6px;
+  }
+  .nav-label {
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 0 8px;
+    margin-bottom: 4px;
+    margin-top: 16px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text2);
+    font-size: 13px;
+    transition: all .15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+  }
+  .nav-item:hover { background: rgba(180,170,120,0.07); color: var(--text); }
+  .nav-item.active { background: rgba(180,170,120,0.12); color: var(--gold); }
+  .nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+
+  /* Main */
+  .main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 32px 36px;
+    max-width: calc(100vw - 220px);
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .page-header {
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .page-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--text);
+    letter-spacing: .01em;
+  }
+  .page-sub { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .card-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+  /* Stat cards */
+  .stat-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label { font-size: 12px; color: var(--text2); margin-top: 6px; }
+  .stat-delta { font-size: 11px; margin-top: 4px; }
+  .up { color: var(--sage); }
+  .down { color: var(--danger); }
+  .neu { color: var(--text3); }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .b-disp { background: rgba(90,143,160,.18); color: #7ec4d8; }
+  .b-cont { background: rgba(106,158,90,.18); color: var(--sage2); }
+  .b-grup { background: rgba(196,176,110,.15); color: var(--gold2); }
+  .b-mkt  { background: rgba(138,106,74,.2); color: #c4986a; }
+  .b-sess { background: rgba(180,70,50,.2); color: #e47a60; }
+  .b-meet { background: rgba(160,152,128,.12); color: var(--text2); border: 1px solid var(--border); }
+
+  /* Buttons */
+  .btn {
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .btn:hover { background: rgba(180,170,120,0.08); border-color: var(--gold); color: var(--gold); }
+  .btn-primary {
+    background: rgba(184,169,106,0.15);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .btn-primary:hover { background: rgba(184,169,106,0.25); }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+  .btn-danger { border-color: rgba(196,98,74,.4); color: var(--danger); }
+  .btn-danger:hover { background: rgba(196,98,74,.1); }
+
+  /* Calendar */
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .cal-nav h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    min-width: 200px;
+    text-align: center;
+  }
+
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+  .cal-day-header {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    padding: 8px 4px;
+    font-weight: 500;
+  }
+  .cal-day {
+    min-height: 110px;
+    height: 110px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px;
+    cursor: pointer;
+    transition: border-color .15s;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .cal-day:hover { border-color: var(--border2); }
+  .cal-day.empty { background: transparent; border-color: transparent; cursor: default; }
+  .cal-day.today { border-color: var(--gold); }
+  .cal-day.session-day { border-color: var(--sage); background: rgba(106,158,90,0.06); }
+  .cal-day-num {
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .cal-day.today .cal-day-num { color: var(--gold); }
+  .cal-day.session-day .cal-day-num { color: var(--sage2); }
+  .cal-task {
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    line-height: 1.3;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+  }
+  .ct-disp { background: rgba(90,143,160,.2); color: #7ec4d8; }
+  .ct-cont { background: rgba(106,158,90,.2); color: var(--sage2); }
+  .ct-grup { background: rgba(196,176,110,.15); color: var(--gold2); }
+  .ct-mkt  { background: rgba(138,106,74,.2); color: #c4986a; }
+  .ct-sess { background: rgba(180,70,50,.25); color: #e47a60; }
+  .ct-meet { background: rgba(160,152,128,.15); color: var(--text2); }
+
+  /* Task editor */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 28px;
+    width: 500px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    color: var(--gold);
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--text3); margin-bottom: 6px; display: block; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color .15s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+  .form-textarea { min-height: 80px; resize: vertical; }
+  .form-select option { background: var(--bg3); }
+
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+  /* Funil */
+  .funnel-stage {
+    display: flex;
+    gap: 16px;
+    padding: 18px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+  }
+  .funnel-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    flex-shrink: 0;
+  }
+  .funnel-arrow { text-align: center; color: var(--text3); margin: -2px 0; font-size: 18px; }
+  .funnel-body h4 { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+  .funnel-body p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .funnel-action { font-size: 12px; color: var(--text3); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+
+  /* TikTok */
+  .tiktok-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .tiktok-week { font-size: 11px; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+  .tiktok-title { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+  .tiktok-hook { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-style: italic; color: var(--text2); margin-bottom: 8px; line-height: 1.4; }
+  .tiktok-desc { font-size: 12px; color: var(--text3); }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; margin-right: 4px; }
+  .p-edu { background: rgba(90,143,160,.15); color: #7ec4d8; }
+  .p-dep { background: rgba(138,106,180,.15); color: #b89ade; }
+  .p-mis { background: rgba(196,144,74,.15); color: #d4a870; }
+  .p-esp { background: rgba(106,158,90,.15); color: var(--sage2); }
+
+  /* Responsáveis */
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 12px; }
+  .team-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .team-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: rgba(184,169,106,0.15);
+    border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--gold);
+    margin: 0 auto 10px;
+  }
+  .team-name { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+  .team-role { font-size: 12px; color: var(--text3); }
+
+  /* Progress bar */
+  .progress-bar { background: var(--bg3); border-radius: 4px; height: 6px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; background: var(--gold); transition: width .3s; }
+
+  /* Leads */
+  .lead-row {
+    display: grid;
+    grid-template-columns: 1fr 100px 100px 80px;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+  }
+  .lead-row:last-child { border-bottom: none; }
+  .lead-name { font-size: 13px; font-weight: 500; }
+  .lead-date { font-size: 12px; color: var(--text3); }
+  .lead-status {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-align: center;
+  }
+  .ls-quente { background: rgba(180,70,50,.2); color: #e47a60; }
+  .ls-morno  { background: rgba(196,144,74,.2); color: #d4a870; }
+  .ls-frio   { background: rgba(90,143,160,.15); color: #7ec4d8; }
+  .ls-novo   { background: rgba(106,158,90,.2); color: var(--sage2); }
+
+  /* Regras */
+  .rule-card {
+    border-left: 3px solid var(--gold);
+    padding: 14px 16px;
+    background: var(--bg3);
+    border-radius: 0 10px 10px 0;
+    margin-bottom: 10px;
+  }
+  .rule-card.sage { border-color: var(--sage); }
+  .rule-card.earth { border-color: var(--earth); }
+  .rule-card.info  { border-color: var(--info); }
+  .rule-title { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+  .rule-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+  /* Cronograma responsáveis */
+  .sched-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .sched-table th {
+    text-align: left; padding: 10px 12px;
+    font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--text3); border-bottom: 1px solid var(--border);
+    font-weight: 400;
+  }
+  .sched-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .sched-table tr:last-child td { border-bottom: none; }
+  .name-tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    background: rgba(184,169,106,0.1);
+    border: 1px solid rgba(184,169,106,0.2);
+    color: var(--gold2);
+    margin: 2px;
+  }
+
+  /* Reunião */
+  .meeting-item {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+    align-items: start;
+  }
+  .meeting-time {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--gold);
+    padding-top: 2px;
+  }
+  .meeting-body {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .meeting-body h4 { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+  .meeting-body p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .meeting-sub { font-size: 12px; color: var(--text3); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--border); }
+
+  /* Meeting Card (Atas) */
+  .meeting-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 14px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .meeting-card:hover { border-color: var(--border2); background: var(--bg3); }
+  .meeting-card-header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 12px;
+  }
+  .meeting-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--text);
+  }
+  .meeting-card-date {
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .meeting-card-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  /* Ideas section */
+  .idea-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  .idea-card:hover { border-color: var(--border2); }
+  .idea-card h4 { font-weight: 500; font-size: 14px; margin-bottom: 6px; }
+  .idea-card p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .idea-tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px; margin-bottom: 8px; }
+  .it-curto  { background: rgba(106,158,90,.15); color: var(--sage2); }
+  .it-medio  { background: rgba(196,176,110,.12); color: var(--gold2); }
+  .it-longo  { background: rgba(90,143,160,.15); color: #7ec4d8; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* Notice bar */
+  .notice {
+    background: rgba(184,169,106,0.08);
+    border: 1px solid rgba(184,169,106,0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .notice strong { color: var(--gold); }
+
+  .sep { height: 1px; background: var(--border); margin: 24px 0; }
+
+  @media (max-width: 800px) {
+    .sidebar { width: 56px; }
+    .sidebar .logo-icon, .sidebar .logo-sub, .nav-item span:not(.nav-icon), .nav-label { display: none; }
+    .main { margin-left: 56px; padding: 20px; }
+    .grid-4 { grid-template-columns: repeat(2,1fr); }
+    .grid-3 { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🌿 Cerimônias</div>
+    <div class="logo-sub">Sistema de Marketing</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Visão Geral</div>
+    <button class="nav-item active" onclick="goTo('dashboard')">
+      <span class="nav-icon">◈</span><span>Dashboard</span>
+    </button>
+    <button class="nav-item" onclick="goTo('calendario')">
+      <span class="nav-icon">◷</span><span>Calendário</span>
+    </button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Estratégia</div>
+    <button class="nav-item" onclick="goTo('funil')">
+      <span class="nav-icon">▽</span><span>Funil</span>
+    </button>
+    <button class="nav-item" onclick="goTo('ideias')">
+      <span class="nav-icon">✦</span><span>Ideias</span>
+    </button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Operacional</div>
+    <button class="nav-item" onclick="goTo('reuniao')">
+      <span class="nav-icon">◆</span><span>Reuniões</span>
+    </button>
+    <button class="nav-item" onclick="goTo('lembrete')">
+      <span class="nav-icon">◇</span><span>Lembre-se</span>
+    </button>
+  </div>
+</nav>
+
+<!-- Main -->
+<main class="main">
+
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Sessões: 26 e 27 de abril · <span id="countdown-text">carregando...</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="goTo('calendario')">Ver calendário →</button>
+    </div>
+
+    <div class="notice" id="notice-display" style="cursor:pointer;position:relative;" onmouseover="document.getElementById('notice-edit-btn').style.opacity='1'" onmouseout="document.getElementById('notice-edit-btn').style.opacity='0.5'">
+      <strong>Próxima ação hoje:</strong> <span id="notice-text">Disparos individuais (todos os fardados) + reunião de marketing (alinhamento + Manuela ensina ferramenta de agendamento).</span>
+      <button class="btn btn-sm" id="notice-edit-btn" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0.5;transition:opacity .2s;" onclick="openEditNoticeModal()">✎</button>
+    </div>
+
+    <div class="grid-4" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-title">Leads totais</div>
+        <div class="stat-val" id="stat-leads">230</div>
+        <div class="stat-label">base cadastrada</div>
+        <div class="stat-delta neu">maioria fora da cidade</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Dias até sessão</div>
+        <div class="stat-val" id="stat-days">—</div>
+        <div class="stat-label">26 de abril</div>
+        <div class="stat-delta" id="stat-days-color">em contagem</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Fardados ativos</div>
+        <div class="stat-val">5</div>
+        <div class="stat-label">André, Karol, Manuela, Volmar, Luis</div>
+        <div class="stat-delta up">todos engajados</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Semanas até sessão</div>
+        <div class="stat-val" id="stat-weeks">—</div>
+        <div class="stat-label">de ação</div>
+        <div class="stat-delta neu">use cada uma</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-title">Progresso do plano</div>
+        <div style="margin-top:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:13px;color:var(--text2);">Disparos iniciados</span>
+            <span style="font-size:12px;color:var(--text3);">hoje</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:5%;background:var(--info);"></div></div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
+            <span style="font-size:13px;color:var(--text2);">Vídeos gravados</span>
+            <span style="font-size:12px;color:var(--text3);">0/5</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div></div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
+            <span style="font-size:13px;color:var(--text2);">TikTok ativo</span>
+            <span style="font-size:12px;color:var(--text3);">0/8 vídeos</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div></div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
+            <span style="font-size:13px;color:var(--text2);">Grupo Descobrindo ativo</span>
+            <span style="font-size:12px;color:var(--text3);">pendente</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--sage);"></div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Próximas ações</div>
+        <div style="margin-top:8px;">
+          <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:start;">
+            <span class="badge b-meet" style="flex-shrink:0;">Hoje</span>
+            <span style="font-size:13px;color:var(--text2);">Reunião de marketing · alinhamento geral + ferramenta</span>
+          </div>
+          <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:start;">
+            <span class="badge b-disp" style="flex-shrink:0;">Hoje</span>
+            <span style="font-size:13px;color:var(--text2);">Disparos individuais — todos os fardados</span>
+          </div>
+          <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:start;">
+            <span class="badge b-cont" style="flex-shrink:0;">Ter 25</span>
+            <span style="font-size:13px;color:var(--text2);">Gravar vídeo depoimento (cada fardado)</span>
+          </div>
+          <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:start;">
+            <span class="badge b-grup" style="flex-shrink:0;">Qua 26</span>
+            <span style="font-size:13px;color:var(--text2);">Convite no grupo — André</span>
+          </div>
+          <div style="padding:10px 0;display:flex;gap:10px;align-items:start;">
+            <span class="badge b-mkt" style="flex-shrink:0;">Qua 26</span>
+            <span style="font-size:13px;color:var(--text2);">Criar conta TikTok + linha editorial</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Regra de ouro</div>
+      <div id="rule-text-display" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--gold);line-height:1.4;margin-top:8px;cursor:pointer;padding:12px;border-radius:8px;transition:all .2s;" onmouseover="this.style.background='rgba(99,255,198,0.05)'" onmouseout="this.style.background='transparent'" onclick="openEditRuleModal()">
+        "O sucesso da cerimônia depende do compromisso contínuo. Exige dedicação estruturada e execução deliberada."
+      </div>
+      <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:right;">clique para editar</div>
+    </div>
+  </div>
+
+  <!-- CALENDÁRIO -->
+  <div id="page-calendario" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Calendário</div>
+        <div class="page-sub">Clique em um dia para adicionar ou editar tarefas</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="badge b-disp">Disparo</span>
+        <span class="badge b-cont">Conteúdo</span>
+        <span class="badge b-grup">Grupo</span>
+        <span class="badge b-mkt">Mkt</span>
+        <span class="badge b-sess">Sessão</span>
+        <span class="badge b-meet">Reunião</span>
+      </div>
+    </div>
+
+    <div class="cal-nav">
+      <button class="btn btn-sm" onclick="prevMonth()">← anterior</button>
+      <h3 id="cal-title">—</h3>
+      <button class="btn btn-sm" onclick="nextMonth()">próximo →</button>
+    </div>
+
+    <div class="cal-grid" id="cal-grid"></div>
+
+    <div class="sep"></div>
+
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-title">Cronograma de convites no grupo (seg/qua/sab)</div>
+      <table class="sched-table" style="margin-top:12px;">
+        <thead>
+          <tr><th>Semana</th><th>Segunda</th><th>Quarta</th><th>Sábado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sem 1 · 24–30 mar</td><td><span class="name-tag">André</span></td><td><span class="name-tag">Karol</span></td><td><span class="name-tag">Manuela</span></td></tr>
+          <tr><td>Sem 2 · 31 mar–6 abr</td><td><span class="name-tag">Volmar</span></td><td><span class="name-tag">Luis A.</span></td><td><span class="name-tag">André</span></td></tr>
+          <tr><td>Sem 3 · 7–13 abr</td><td><span class="name-tag">Karol</span></td><td><span class="name-tag">Manuela</span></td><td><span class="name-tag">Volmar</span></td></tr>
+          <tr><td>Sem 4 · 14–20 abr</td><td><span class="name-tag">Luis A.</span></td><td><span class="name-tag">André</span></td><td><span class="name-tag">Karol</span></td></tr>
+          <tr><td>Sem 5 · 21–27 abr</td><td><span class="name-tag">Manuela</span></td><td><span class="name-tag">Volmar</span></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+        Responsabilidades fixas
+        <button class="btn btn-sm" onclick="openAddResponsibilityModal()">+ Adicionar</button>
+      </div>
+      <div id="responsibilities-list" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <!-- FUNIL -->
+  <div id="page-funil" class="page">
+    <div class="page-header">
+      <div class="page-title">Funil de Captação</div>
+      <div class="page-sub">Da descoberta à fidelização — 5 estágios</div>
+    </div>
+
+    <div class="funnel-stage">
+      <div class="funnel-num" style="background:rgba(90,143,160,.15);color:#7ec4d8;">1</div>
+      <div class="funnel-body">
+        <h4>Descoberta — TikTok + SEO local</h4>
+        <p>Pessoa desconhecida encontra um vídeo ou o site via busca: "cerimônia de cura Caxias do Sul", "medicina ancestral RS". Nunca use "ayahuasca" em títulos de anúncios pagos.</p>
+        <div class="funnel-action">→ Link na bio do TikTok leva para WhatsApp ou grupo "Descobrindo Ayahuasca"</div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓</div>
+
+    <div class="funnel-stage">
+      <div class="funnel-num" style="background:rgba(106,158,90,.15);color:var(--sage2);">2</div>
+      <div class="funnel-body">
+        <h4>Aquecimento — Grupo "Descobrindo Ayahuasca"</h4>
+        <p>Lead entra no grupo e recebe conteúdo de nutrição. Em até 48h, um fardado entra em contato individual — tira dúvidas, constrói vínculo. Sem vínculo, não há conversão.</p>
+        <div class="funnel-action">→ Conteúdo 3x/semana + contato individual obrigatório em 48h</div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓</div>
+
+    <div class="funnel-stage">
+      <div class="funnel-num" style="background:rgba(196,176,110,.12);color:var(--gold2);">3</div>
+      <div class="funnel-body">
+        <h4>Conversão — Convite e inscrição</h4>
+        <p>Após nutrição, lead recebe convite direto para a sessão. Via grupo principal, disparo individual ou indicação. Formulário simples + confirmação humana (nunca bot).</p>
+        <div class="funnel-action">→ Não pressione. Quem tem vínculo converte naturalmente.</div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓</div>
+
+    <div class="funnel-stage">
+      <div class="funnel-num" style="background:rgba(106,158,90,.15);color:var(--sage2);">4</div>
+      <div class="funnel-body">
+        <h4>Participação — Sessão</h4>
+        <p>Cerimônia acontece. A vivência do grupo e do vínculo com os fardados é o principal fator de retenção para as próximas sessões.</p>
+        <div class="funnel-action">→ Antes: enviar preparação. Depois: colher depoimentos (com consentimento)</div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓</div>
+
+    <div class="funnel-stage">
+      <div class="funnel-num" style="background:rgba(138,106,180,.15);color:#b89ade;">5</div>
+      <div class="funnel-body">
+        <h4>Fidelização — Comunidade e integração pós-sessão</h4>
+        <p>Nas 72h após a sessão, a pessoa está mais aberta. Crie uma roda de integração (Zoom ou grupo especial). Mensagens personalizadas de follow-up. Quem se sente acompanhado volta.</p>
+        <div class="funnel-action">→ Vínculo pós-sessão é o que transforma participante em comunidade</div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="card">
+      <div class="card-title">Programa de embaixadores</div>
+      <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-top:8px;">
+        Cada participante tem um círculo de confiança que nenhum TikTok alcança. Crie um papel informal de embaixador: quem indicar alguém que efetivamente comparecer ganha algo simbólico — prioridade de vaga na próxima sessão, uma conversa individual com o facilitador, um material especial. Não precisa ser dinheiro. O reconhecimento já move.
+      </p>
+    </div>
+  </div>
+
+  <!-- IDEIAS -->
+  <div id="page-ideias" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Ideias de Refinamento</div>
+        <div class="page-sub">Estratégias para fortalecer a comunidade</div>
+      </div>
+      <button class="btn btn-primary" onclick="openAddIdeaModal()">+ Nova ideia</button>
+    </div>
+
+    <div id="ideas-container"></div>
+  </div>
+
+  <!-- REUNIÃO -->
+  <div id="page-reuniao" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Reuniões de Marketing</div>
+        <div class="page-sub">Arquivo de atas das reuniões realizadas</div>
+      </div>
+      <button class="btn btn-primary" onclick="openNewMeetingModal()">+ Nova reunião</button>
+    </div>
+
+    <div id="meetings-list"></div>
+  </div>
+
+  <!-- LEMBRE-SE SEMPRE -->
+  <div id="page-lembrete" class="page">
+    <div class="page-header">
+      <div class="page-title">Lembre-se SEMPRE</div>
+      <div class="page-sub">Princípios inegociáveis da estratégia</div>
+    </div>
+
+    <div class="rule-card">
+      <div class="rule-title">Atendimento não é "quando der"</div>
+      <div class="rule-desc">Disparos e atendimento a leads são prioridade igual às demais obrigações de vida de cada fardado. A sessão precisa de esforço para acontecer, ou não vai rolar. Quem não atende perde o lead para sempre — esse lead nunca mais vai perguntar.</div>
+    </div>
+
+    <div class="rule-card sage">
+      <div class="rule-title">Vínculo é retenção</div>
+      <div class="rule-desc">Quem não tem vínculo não volta. A maior questão para manter as pessoas nas sessões não é o convite — é a relação construída antes e depois. Cada pessoa que entra no grupo "Descobrindo" deve receber contato individual em até 48h.</div>
+    </div>
+
+    <div class="rule-card earth">
+      <div class="rule-title">Linguagem nas redes — proteção contra ban</div>
+      <div class="rule-desc">Nunca use "ayahuasca" em títulos de anúncios pagos. Prefira: medicina ancestral, cura integrativa, expansão de consciência, cerimônia sagrada, espiritualidade. Conteúdo orgânico tem mais tolerância. Contas que ensinam e inspiram crescem mais do que contas que vendem.</div>
+    </div>
+
+    <div class="rule-card info">
+      <div class="rule-title">Leads frios — estratégia certa</div>
+      <div class="rule-desc">Não abandone os 230+ leads, mas não tente reconvertê-los com convite direto. Use essa base para pedir indicações de pessoas da nova cidade, ou para reativar com mensagem de reconhecimento e cuidado. Quem responde positivamente já é lead quente.</div>
+    </div>
+
+    <div class="rule-card" style="border-color:var(--sage);">
+      <div class="rule-title">Grupo "Descobrindo" não pode ser cemitério</div>
+      <div class="rule-desc">Grupo sem resposta humana vira cemitério de leads. Quem cuida disso precisa estar comprometido todos os dias. Conteúdo 3x/semana + contato individual = a diferença entre conversão e silêncio.</div>
+    </div>
+
+    <div class="rule-card" style="border-color:var(--gold);">
+      <div class="rule-title">Pós-sessão é o início, não o fim</div>
+      <div class="rule-desc">Nas 72h após a cerimônia, a pessoa está mais aberta do que nunca. Esse é o momento mais poderoso para construir fidelização. Não deixe a pessoa sozinha depois da experiência. Roda de integração, mensagens personalizadas, presença contínua.</div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- Modal para tarefas do calendário -->
+<div class="modal-overlay" id="modal-task">
+  <div class="modal">
+    <div class="modal-title" id="modal-day-title">Adicionar tarefa</div>
+    <div id="existing-tasks" style="margin-bottom:16px;"></div>
+    <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:8px;">
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;">Nova tarefa</div>
+      <div class="form-group">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" id="task-type">
+          <option value="disp">Disparo</option>
+          <option value="cont">Conteúdo</option>
+          <option value="grup">Grupo</option>
+          <option value="mkt">Mkt/Funil</option>
+          <option value="sess">Sessão</option>
+          <option value="meet">Reunião</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input class="form-input" id="task-text" placeholder="Descreva a tarefa...">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveTask()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal para editar regra de ouro -->
+<div class="modal-overlay" id="modal-edit-rule">
+  <div class="modal">
+    <div class="modal-title">Editar Regra de Ouro</div>
+    <div class="form-group">
+      <label class="form-label">Texto da regra</label>
+      <textarea class="form-textarea" id="rule-text" placeholder="Digite a regra de ouro..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeEditRuleModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditRule()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar notice -->
+<div class="modal-overlay" id="modal-edit-notice">
+  <div class="modal">
+    <div class="modal-title">Editar Próxima Ação</div>
+    <div class="form-group">
+      <label class="form-label">Texto da ação</label>
+      <textarea class="form-textarea" id="notice-text-input" placeholder="Descreva a próxima ação..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeEditNoticeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditNotice()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar ideias -->
+<div class="modal-overlay" id="modal-idea">
+  <div class="modal">
+    <div class="modal-title" id="idea-modal-title">Nova Ideia</div>
+    <div class="form-group">
+      <label class="form-label">Prazo</label>
+      <select class="form-select" id="idea-prazo">
+        <option value="curto">Curto prazo</option>
+        <option value="medio">Médio prazo</option>
+        <option value="longo">Longo prazo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Título</label>
+      <input class="form-input" id="idea-titulo" placeholder="Título da ideia...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descrição</label>
+      <textarea class="form-textarea" id="idea-desc" placeholder="Descreva a ideia..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeIdeaModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveIdea()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar responsabilidades -->
+<div class="modal-overlay" id="modal-responsibility">
+  <div class="modal">
+    <div class="modal-title" id="resp-modal-title">Nova Responsabilidade</div>
+    <div class="form-group">
+      <label class="form-label">Quem</label>
+      <input class="form-input" id="resp-who" placeholder="Nome ou 'Todos'...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">O quê</label>
+      <textarea class="form-textarea" id="resp-what" placeholder="Descreva a responsabilidade..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeResponsibilityModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveResponsibility()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para reunião em tela cheia -->
+<div class="modal-overlay" id="modal-meeting" style="display:flex;align-items:center;justify-content:center;padding:20px;">
+  <div class="modal" style="width:90%;max-width:800px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-title" id="meeting-modal-title">Editar Reunião</div>
+    <div class="form-group">
+      <label class="form-label">Título</label>
+      <input class="form-input" id="meeting-title" placeholder="Título da reunião...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Data</label>
+      <input class="form-input" id="meeting-date" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Conteúdo da Ata</label>
+      <textarea class="form-textarea" id="meeting-content" placeholder="Escreva o conteúdo completo da reunião..." style="min-height:300px;"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeMeetingModal()">Cancelar</button>
+      <button class="btn btn-danger" id="delete-meeting-btn" style="margin-right:auto;" onclick="deleteMeetingFromModal()">Deletar</button>
+      <button class="btn btn-primary" onclick="saveMeeting()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- NAV ----
+function goTo(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) n.classList.add('active');
+  });
+  if (id === 'calendario') renderCalendar();
+}
+
+// ---- COUNTDOWN ----
+function updateCountdown() {
+  const target = new Date('2026-04-26');
+  const now = new Date();
+  const diff = Math.ceil((target - now) / (1000*60*60*24));
+  const weeks = Math.ceil(diff / 7);
+  document.getElementById('stat-days').textContent = diff > 0 ? diff : 0;
+  document.getElementById('stat-weeks').textContent = diff > 0 ? weeks : 0;
+  document.getElementById('countdown-text').textContent = diff > 0 ? diff + ' dias restantes' : 'Sessão hoje!';
+}
+updateCountdown();
+
+// ---- CALENDAR ----
+let calYear = 2026, calMonth = 2; // 0-indexed, March=2
+
+const defaultTasks = {
+  '2026-3-24': [
+    {type:'meet', text:'Reunião de marketing · alinhamento + ferramenta'},
+    {type:'disp', text:'Disparos individuais — todos os fardados'}
+  ],
+  '2026-3-25': [{type:'cont', text:'Gravar vídeo depoimento (cada fardado)'}],
+  '2026-3-27': [{type:'cont', text:'TikTok #1: Apresentação (hook forte, sem nomear)'}],
+  '2026-3-28': [
+    {type:'grup', text:'Post pedindo indicações no grupo principal'},
+    {type:'cont', text:'TikTok #2: Depoimento Fardado #1'},
+    {type:'mkt',  text:'Criar conta TikTok + linha editorial'}
+  ],
+  '2026-3-30': [
+    {type:'grup', text:'Convite no grupo — André'},
+    {type:'mkt',  text:'Briefing landing page / site SEO'}
+  ],
+  '2026-4-1': [
+    {type:'disp', text:'Novo lote de disparos individuais'},
+    {type:'cont', text:'TikTok #3: Desmistificação — O que a ciência diz'}
+  ],
+  '2026-4-2':  [
+    {type:'grup', text:'Convite no grupo — Karol'},
+    {type:'mkt',  text:'Lançar grupo Descobrindo Ayahuasca'}
+  ],
+  '2026-4-4':  [
+    {type:'cont', text:'TikTok #4: Reflexão Espiritual'},
+    {type:'disp', text:'Follow-up em quem não respondeu (sem 1)'}
+  ],
+  '2026-4-6':  [
+    {type:'grup', text:'Convite no grupo — Manuela'},
+    {type:'disp', text:'Novo lote de disparos'}
+  ],
+  '2026-4-8':  [
+    {type:'cont', text:'TikTok #5: O que esperar da primeira vez'}
+  ],
+  '2026-4-9':  [
+    {type:'grup', text:'Convite no grupo — Volmar'},
+    {type:'mkt',  text:'Revisão do funil: leads no grupo Descobrindo?'}
+  ],
+  '2026-4-11': [
+    {type:'cont', text:'TikTok #6: Depoimento Fardado #2 — O cético'},
+    {type:'disp', text:'Convite oficial para sessão de abril (26 e 27)'}
+  ],
+  '2026-4-13': [
+    {type:'grup', text:'Convite no grupo — Luis Armiliato'},
+    {type:'cont', text:'TikTok #7: Cura emocional'}
+  ],
+  '2026-4-16': [
+    {type:'disp', text:'Lembrete individual para confirmação de presença'},
+    {type:'cont', text:'TikTok #8: Convite velado (pré-sessão)'}
+  ],
+  '2026-4-18': [
+    {type:'grup', text:'Convite no grupo — André'},
+    {type:'mkt',  text:'Revisão: inscrições confirmadas para abril'}
+  ],
+  '2026-4-20': [
+    {type:'disp', text:'Último lote de confirmações'},
+    {type:'cont', text:'Post de preparação'}
+  ],
+  '2026-4-22': [
+    {type:'grup', text:'Convite no grupo — Karol'},
+    {type:'disp', text:'Mensagem de acolhimento e lembrete final'}
+  ],
+  '2026-4-26': [{type:'sess', text:'🌿 SESSÃO — Dia 1'}],
+  '2026-4-27': [
+    {type:'sess', text:'🌿 SESSÃO — Dia 2'},
+    {type:'cont', text:'Coletar depoimentos novos (com consentimento)'}
+  ],
+};
+
+let customTasks = JSON.parse(localStorage.getItem('cal_tasks') || '{}');
+let editingDay = null;
+
+function getKey(y, m, d) { return y + '-' + (m+1) + '-' + d; }
+
+function getTasks(y, m, d) {
+  const k = getKey(y, m, d);
+  const def = defaultTasks[k] || [];
+  const cust = customTasks[k] || [];
+  return [...def, ...cust];
+}
+
+function renderCalendar() {
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('cal-title').textContent = months[calMonth] + ' ' + calYear;
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  days.forEach(d => { const h = document.createElement('div'); h.className = 'cal-day-header'; h.textContent = d; grid.appendChild(h); });
+
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const total = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+
+  for (let i = 0; i < first; i++) { const e = document.createElement('div'); e.className = 'cal-day empty'; grid.appendChild(e); }
+
+  for (let d = 1; d <= total; d++) {
+    const cell = document.createElement('div');
+    const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+    const isSess = (calMonth === 3 && (d === 26 || d === 27));
+    cell.className = 'cal-day' + (isToday ? ' today' : '') + (isSess ? ' session-day' : '');
+    cell.innerHTML = '<div class="cal-day-num">' + d + '</div>';
+    const tasks = getTasks(calYear, calMonth, d);
+    tasks.slice(0,3).forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'cal-task ct-' + t.type;
+      el.textContent = t.text;
+      cell.appendChild(el);
+    });
+    if (tasks.length > 3) {
+      const more = document.createElement('div');
+      more.className = 'cal-task ct-meet';
+      more.textContent = '+' + (tasks.length-3) + ' mais';
+      cell.appendChild(more);
+    }
+    cell.onclick = () => openDayModal(d);
+    grid.appendChild(cell);
+  }
+}
+
+function prevMonth() {
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+function nextMonth() {
+  calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+}
+
+function openDayModal(d) {
+  editingDay = getKey(calYear, calMonth, d);
+  const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  document.getElementById('modal-day-title').textContent = d + ' de ' + months[calMonth];
+  const tasks = getTasks(calYear, calMonth, d);
+  const container = document.getElementById('existing-tasks');
+  if (tasks.length > 0) {
+    container.innerHTML = '<div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px;">Tarefas do dia</div>';
+    tasks.forEach((t, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);';
+      const badge = document.createElement('span');
+      badge.className = 'badge b-' + t.type;
+      badge.textContent = {disp:'Disparo',cont:'Conteúdo',grup:'Grupo',mkt:'Mkt',sess:'Sessão',meet:'Reunião'}[t.type];
+      const txt = document.createElement('span');
+      txt.style.cssText = 'font-size:13px;color:var(--text2);flex:1;';
+      txt.textContent = t.text;
+      row.appendChild(badge); row.appendChild(txt);
+      const def = defaultTasks[editingDay] || [];
+      if (i >= def.length) {
+        const del = document.createElement('button');
+        del.className = 'btn btn-sm btn-danger';
+        del.textContent = '×';
+        del.onclick = () => deleteCustomTask(i - def.length);
+        row.appendChild(del);
+      }
+      container.appendChild(row);
+    });
+  } else {
+    container.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:8px 0;">Nenhuma tarefa ainda.</div>';
+  }
+  document.getElementById('modal-task').classList.add('open');
+}
+
+function deleteCustomTask(idx) {
+  if (!customTasks[editingDay]) return;
+  customTasks[editingDay].splice(idx, 1);
+  if (customTasks[editingDay].length === 0) delete customTasks[editingDay];
+  localStorage.setItem('cal_tasks', JSON.stringify(customTasks));
+  closeModal();
+  renderCalendar();
+}
+
+function saveTask() {
+  const type = document.getElementById('task-type').value;
+  const text = document.getElementById('task-text').value.trim();
+  if (!text) return;
+  if (!customTasks[editingDay]) customTasks[editingDay] = [];
+  customTasks[editingDay].push({type, text});
+  localStorage.setItem('cal_tasks', JSON.stringify(customTasks));
+  document.getElementById('task-text').value = '';
+  closeModal();
+  renderCalendar();
+}
+
+function closeModal() { document.getElementById('modal-task').classList.remove('open'); }
+
+// ---- EDIÇÃO DE REGRA ----
+function openEditRuleModal() {
+  const current = document.getElementById('rule-text-display').textContent.trim();
+  document.getElementById('rule-text').value = current;
+  document.getElementById('modal-edit-rule').classList.add('open');
+}
+
+function closeEditRuleModal() { 
+  document.getElementById('modal-edit-rule').classList.remove('open'); 
+}
+
+function saveEditRule() {
+  const newText = document.getElementById('rule-text').value.trim();
+  if (!newText) return;
+  localStorage.setItem('custom_rule', newText);
+  document.getElementById('rule-text-display').textContent = newText;
+  closeEditRuleModal();
+}
+
+// ---- EDIÇÃO DE NOTICE ----
+function openEditNoticeModal() {
+  const current = document.getElementById('notice-text').textContent.trim();
+  document.getElementById('notice-text-input').value = current;
+  document.getElementById('modal-edit-notice').classList.add('open');
+}
+
+function closeEditNoticeModal() { 
+  document.getElementById('modal-edit-notice').classList.remove('open'); 
+}
+
+function saveEditNotice() {
+  const newText = document.getElementById('notice-text-input').value.trim();
+  if (!newText) return;
+  localStorage.setItem('custom_notice', newText);
+  document.getElementById('notice-text').textContent = newText;
+  closeEditNoticeModal();
+}
+
+// ---- REUNIÕES (ATAS) ----
+let meetings = JSON.parse(localStorage.getItem('meetings') || '[]');
+if (meetings.length === 0) {
+  meetings = [
+    {
+      id: Date.now(),
+      title: 'Reunião de Marketing - Alinhamento Geral',
+      date: '2026-03-24',
+      content: 'ABERTURA (0–5\')\nContextualizar: as sessões de abril dependem de esforço coletivo agora. Não existe "vai acontecer naturalmente". Cada fardado é parte ativa da construção.\n\nALINHAMENTO — ATENDIMENTO É PRIORIDADE (5–15\')\nDisparos e respostas a leads não são "quando der". São compromisso igual a qualquer outro. Abrir para dúvidas e resistências — melhor resolver aqui do que no silêncio.\nPonto-chave: quem não atende perde o lead para sempre. Esse lead nunca mais vai perguntar.\n\nPRÁTICO — MANUELA ENSINA A FERRAMENTA DE AGENDAMENTO (15–30\')\nDemonstração ao vivo: como agendar mensagens de bom dia, reflexão e follow-up para a semana inteira. Cada fardado sai da reunião com pelo menos a primeira semana agendada.\nObjetivo: ninguém mais depende de lembrar de postar. Está pronto, automático.\n\nESTRATÉGIA — APRESENTAÇÃO DO PLANO DOS 2 MESES (30–40\')\nMostrar o cronograma: quem faz convite em qual dia, quando são os disparos, como funciona o funil. Cada pessoa sabe exatamente o que fazer e quando.\nDistribuir o cronograma de revezamento de convites no grupo.\n\nPRÁTICO — VÍDEOS DEPOIMENTO (40–50\')\nCombinar como e quando cada fardado vai gravar. Definir prazo hoje. Alguém fica responsável por receber e publicar.\nDica: vídeo vertical, 60–90 segundos, espontâneo. Não precisa ser produção profissional.\n\nALINHAMENTO — GRUPO "DESCOBRINDO AYAHUASCA" (50–60\')\nDefinir: quem monitora o grupo? Quem faz contato individual? Regra: contato humano em até 48h após entrada. Construir vínculo antes de convidar para a sessão.\n\nENCERRAMENTO + COMPROMETIMENTOS (60–75\')\nCada pessoa fala em voz alta: "Meu compromisso até sexta é ______." Sair com ações concretas, não intenções vagas. Marcar próxima reunião: 7 de abril.'
+    }
+  ];
+}
+let editingMeetingId = null;
+
+function renderMeetings() {
+  const container = document.getElementById('meetings-list');
+  container.innerHTML = '';
+  
+  if (meetings.length === 0) {
+    container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:var(--text3);font-size:13px;">Nenhuma reunião registrada ainda.</div>';
+    return;
+  }
+  
+  meetings.forEach((m, idx) => {
+    const card = document.createElement('div');
+    card.className = 'meeting-card';
+    
+    const dateObj = new Date(m.date + 'T00:00:00');
+    const dateStr = dateObj.toLocaleDateString('pt-BR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+    
+    const preview = m.content.substring(0, 100) + (m.content.length > 100 ? '...' : '');
+    
+    card.innerHTML = `
+      <div class="meeting-card-header">
+        <div style="flex:1;" onclick="openMeetingModal(${idx})">
+          <div class="meeting-card-title">${m.title}</div>
+          <div class="meeting-card-date">${dateStr}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.4;">${preview}</div>
+        </div>
+        <div class="meeting-card-actions">
+          <button class="btn btn-sm" onclick="openMeetingModal(${idx})" title="Abrir">▶</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteMeeting(${idx})" title="Deletar">×</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function openNewMeetingModal() {
+  editingMeetingId = null;
+  document.getElementById('meeting-modal-title').textContent = 'Nova Reunião';
+  document.getElementById('meeting-title').value = '';
+  document.getElementById('meeting-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('meeting-content').value = '';
+  document.getElementById('delete-meeting-btn').style.display = 'none';
+  document.getElementById('modal-meeting').classList.add('open');
+}
+
+function openMeetingModal(idx) {
+  editingMeetingId = idx;
+  const m = meetings[idx];
+  document.getElementById('meeting-modal-title').textContent = 'Editar Reunião';
+  document.getElementById('meeting-title').value = m.title;
+  document.getElementById('meeting-date').value = m.date;
+  document.getElementById('meeting-content').value = m.content;
+  document.getElementById('delete-meeting-btn').style.display = 'block';
+  document.getElementById('modal-meeting').classList.add('open');
+}
+
+function deleteMeeting(idx) {
+  if (confirm('Tem certeza que deseja deletar esta reunião?')) {
+    meetings.splice(idx, 1);
+    localStorage.setItem('meetings', JSON.stringify(meetings));
+    renderMeetings();
+  }
+}
+
+function deleteMeetingFromModal() {
+  if (editingMeetingId !== null && confirm('Tem certeza que deseja deletar esta reunião?')) {
+    meetings.splice(editingMeetingId, 1);
+    localStorage.setItem('meetings', JSON.stringify(meetings));
+    closeMeetingModal();
+    renderMeetings();
+  }
+}
+
+function closeMeetingModal() {
+  document.getElementById('modal-meeting').classList.remove('open');
+}
+
+function saveMeeting() {
+  const title = document.getElementById('meeting-title').value.trim();
+  const date = document.getElementById('meeting-date').value;
+  const content = document.getElementById('meeting-content').value.trim();
+  
+  if (!title || !date || !content) {
+    alert('Preencha todos os campos');
+    return;
+  }
+  
+  if (editingMeetingId !== null) {
+    meetings[editingMeetingId] = {id: meetings[editingMeetingId].id, title, date, content};
+  } else {
+    meetings.push({id: Date.now(), title, date, content});
+  }
+  
+  localStorage.setItem('meetings', JSON.stringify(meetings));
+  closeMeetingModal();
+  renderMeetings();
+}
+
+// ---- RESPONSABILIDADES ----
+let responsibilities = JSON.parse(localStorage.getItem('responsibilities') || '[]');
+if (responsibilities.length === 0) {
+  responsibilities = [
+    {who:'Manuela', what:'Treinar todos na ferramenta de agendamento (reunião de amanhã) · coordenar grupo "Descobrindo Ayahuasca" · contato individual em até 48h para quem entra'},
+    {who:'Todos', what:'Disparos individuais diários · agendar mensagens semanais · gravar vídeo depoimento'},
+    {who:'A definir', what:'TikTok: criação e publicação (2x/semana)'},
+    {who:'A definir', what:'Atendimento individual no grupo Descobrindo'},
+  ];
+}
+let editingRespIndex = null;
+
+function renderResponsibilities() {
+  const container = document.getElementById('responsibilities-list');
+  container.innerHTML = '';
+  
+  if (responsibilities.length === 0) {
+    container.innerHTML = '<div style="padding:20px 0;text-align:center;color:var(--text3);font-size:13px;">Nenhuma responsabilidade adicionada.</div>';
+    return;
+  }
+  
+  responsibilities.forEach((r, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:150px 1fr 80px;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:start;';
+    
+    const whoCell = document.createElement('div');
+    whoCell.innerHTML = `<span class="name-tag">${r.who}</span>`;
+    
+    const whatCell = document.createElement('div');
+    whatCell.style.cssText = 'font-size:13px;color:var(--text2);line-height:1.5;';
+    whatCell.textContent = r.what;
+    
+    const actionsCell = document.createElement('div');
+    actionsCell.style.cssText = 'display:flex;gap:4px;';
+    actionsCell.innerHTML = `
+      <button class="btn btn-sm" onclick="editResponsibility(${idx})" style="flex:1;">✎</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteResponsibility(${idx})" style="flex:1;">×</button>
+    `;
+    
+    row.appendChild(whoCell);
+    row.appendChild(whatCell);
+    row.appendChild(actionsCell);
+    container.appendChild(row);
+  });
+}
+
+function openAddResponsibilityModal() {
+  editingRespIndex = null;
+  document.getElementById('resp-modal-title').textContent = 'Nova Responsabilidade';
+  document.getElementById('resp-who').value = '';
+  document.getElementById('resp-what').value = '';
+  document.getElementById('modal-responsibility').classList.add('open');
+}
+
+function editResponsibility(idx) {
+  editingRespIndex = idx;
+  const r = responsibilities[idx];
+  document.getElementById('resp-modal-title').textContent = 'Editar Responsabilidade';
+  document.getElementById('resp-who').value = r.who;
+  document.getElementById('resp-what').value = r.what;
+  document.getElementById('modal-responsibility').classList.add('open');
+}
+
+function deleteResponsibility(idx) {
+  if (confirm('Tem certeza que deseja deletar esta responsabilidade?')) {
+    responsibilities.splice(idx, 1);
+    localStorage.setItem('responsibilities', JSON.stringify(responsibilities));
+    renderResponsibilities();
+  }
+}
+
+function closeResponsibilityModal() {
+  document.getElementById('modal-responsibility').classList.remove('open');
+}
+
+function saveResponsibility() {
+  const who = document.getElementById('resp-who').value.trim();
+  const what = document.getElementById('resp-what').value.trim();
+  if (!who || !what) return;
+  
+  if (editingRespIndex !== null) {
+    responsibilities[editingRespIndex] = {who, what};
+  } else {
+    responsibilities.push({who, what});
+  }
+  localStorage.setItem('responsibilities', JSON.stringify(responsibilities));
+  closeResponsibilityModal();
+  renderResponsibilities();
+}
+
+// ---- IDEIAS ----
+let ideas = JSON.parse(localStorage.getItem('ideas') || '[]');
+if (ideas.length === 0) {
+  ideas = [
+    {prazo:'curto', titulo:'Reativação da base fria — 230+ leads', desc:'Não envie convite direto. Envie mensagem reconhecendo que a casa mudou, que o grupo foi reestruturado, perguntando como a pessoa está. Quem responde positivamente é seu lead mais quente do momento, mesmo sendo "antigo". Use essa base também para pedir indicações de pessoas na nova cidade.'},
+    {prazo:'curto', titulo:'Ritual de boas-vindas no grupo "Descobrindo"', desc:'Quando alguém entra: dia 1 — mensagem de boas-vindas personalizada. Dia 2 — vídeo âncora explicando a medicina de forma acolhedora. Dia 3 — pergunta aberta: "o que te trouxe até aqui?". Essa pergunta sozinha abre conversas que nenhum funil automatizado consegue.'},
+    {prazo:'curto', titulo:'Roda de integração pós-sessão (72h depois)', desc:'Nas 72h após a cerimônia, a pessoa está mais aberta do que nunca. Uma chamada de Zoom ou grupo especial de WhatsApp com reflexões sobre o processo de integração é o que mais fideliza. Quem se sente acompanhado depois não só volta — indica.'},
+    {prazo:'medio', titulo:'SEO local — começa agora, colhe em 60–90 dias', desc:'Uma landing page simples com textos otimizados para "cerimônia de cura Caxias do Sul", "medicina ancestral Serra Gaúcha", "expansão de consciência Rio Grande do Sul". É o único canal que trabalha enquanto você dorme. FAQ + depoimentos + botão para WhatsApp já resolve.'},
+    {prazo:'medio', titulo:'Programa de embaixadores', desc:'Quem indicar alguém que efetivamente comparecer ganha algo simbólico: prioridade de vaga, conversa individual com o facilitador, material especial. Não precisa ser dinheiro. Cada participante tem um círculo de confiança que nenhum TikTok alcança.'},
+    {prazo:'medio', titulo:'Calendário de conteúdo temático', desc:'Temas fixos por dia: segunda = depoimento, quarta = educativo/desmistificação, sexta = reflexão espiritual. Cria expectativa no público, facilita a produção e constrói identidade reconhecível. Com o tempo, as pessoas passam a esperar pelo conteúdo de segunda.'},
+    {prazo:'medio', titulo:'Segmentação dos grupos', desc:'Grupo principal (comunidade ativa), "Descobrindo" (quem está chegando) e lista de transmissão para leads que demonstraram interesse mas ainda não foram. Cada público precisa de linguagem diferente. Falar para todos ao mesmo tempo dilui a mensagem.'},
+    {prazo:'longo', titulo:'Parcerias locais', desc:'Psicólogos, terapeutas, professores de yoga e espaços de meditação em Caxias do Sul têm clientes no perfil do seu público. Uma conversa honesta com dois ou três desses profissionais pode gerar fluxo constante de indicações qualificadas. Não é venda, é rede de confiança.'},
+    {prazo:'longo', titulo:'Métricas simples semanais', desc:'Três números toda semana: (1) quantas pessoas novas entraram no "Descobrindo", (2) quantas receberam contato individual, (3) quantas confirmaram presença. Se entram muitos mas poucos recebem contato → gargalo é atendimento. Se recebem contato mas não confirmam → gargalo é a oferta.'},
+  ];
+}
+let editingIdeaIndex = null;
+
+function renderIdeas() {
+  const container = document.getElementById('ideas-container');
+  container.innerHTML = '';
+  ideas.forEach((idea, idx) => {
+    const tagClass = {curto:'it-curto', medio:'it-medio', longo:'it-longo'}[idea.prazo];
+    const tagText = {curto:'Curto prazo', medio:'Médio prazo', longo:'Longo prazo'}[idea.prazo];
+    const card = document.createElement('div');
+    card.className = 'idea-card';
+    card.style.position = 'relative';
+    card.innerHTML = `
+      <span class="idea-tag ${tagClass}">${tagText}</span>
+      <h4>${idea.titulo}</h4>
+      <p>${idea.desc}</p>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-sm" onclick="editIdea(${idx})">✎ Editar</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteIdea(${idx})">× Deletar</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function openAddIdeaModal() {
+  editingIdeaIndex = null;
+  document.getElementById('idea-modal-title').textContent = 'Nova Ideia';
+  document.getElementById('idea-prazo').value = 'curto';
+  document.getElementById('idea-titulo').value = '';
+  document.getElementById('idea-desc').value = '';
+  document.getElementById('modal-idea').classList.add('open');
+}
+
+function editIdea(idx) {
+  editingIdeaIndex = idx;
+  const idea = ideas[idx];
+  document.getElementById('idea-modal-title').textContent = 'Editar Ideia';
+  document.getElementById('idea-prazo').value = idea.prazo;
+  document.getElementById('idea-titulo').value = idea.titulo;
+  document.getElementById('idea-desc').value = idea.desc;
+  document.getElementById('modal-idea').classList.add('open');
+}
+
+function deleteIdea(idx) {
+  if (confirm('Tem certeza que deseja deletar esta ideia?')) {
+    ideas.splice(idx, 1);
+    localStorage.setItem('ideas', JSON.stringify(ideas));
+    renderIdeas();
+  }
+}
+
+function closeIdeaModal() {
+  document.getElementById('modal-idea').classList.remove('open');
+}
+
+function saveIdea() {
+  const prazo = document.getElementById('idea-prazo').value;
+  const titulo = document.getElementById('idea-titulo').value.trim();
+  const desc = document.getElementById('idea-desc').value.trim();
+  if (!titulo || !desc) return;
+  
+  if (editingIdeaIndex !== null) {
+    ideas[editingIdeaIndex] = {prazo, titulo, desc};
+  } else {
+    ideas.push({prazo, titulo, desc});
+  }
+  localStorage.setItem('ideas', JSON.stringify(ideas));
+  closeIdeaModal();
+  renderIdeas();
+}
+
+// Carregar customizações ao iniciar
+window.addEventListener('DOMContentLoaded', function() {
+  const customRule = localStorage.getItem('custom_rule');
+  if (customRule) {
+    document.getElementById('rule-text-display').textContent = customRule;
+  }
+  const customNotice = localStorage.getItem('custom_notice');
+  if (customNotice) {
+    document.getElementById('notice-text').textContent = customNotice;
+  }
+  if (document.getElementById('ideas-container')) {
+    renderIdeas();
+  }
+  if (document.getElementById('responsibilities-list')) {
+    renderResponsibilities();
+  }
+  if (document.getElementById('meetings-list')) {
+    renderMeetings();
+  }
+});
+
+// close modals on overlay click
+document.getElementById('modal-task').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+document.getElementById('modal-edit-rule').addEventListener('click', function(e) { if(e.target===this) closeEditRuleModal(); });
+document.getElementById('modal-edit-notice').addEventListener('click', function(e) { if(e.target===this) closeEditNoticeModal(); });
+document.getElementById('modal-idea').addEventListener('click', function(e) { if(e.target===this) closeIdeaModal(); });
+document.getElementById('modal-responsibility').addEventListener('click', function(e) { if(e.target===this) closeResponsibilityModal(); });
+document.getElementById('modal-meeting').addEventListener('click', function(e) { if(e.target===this) closeMeetingModal(); });
+</script>
+</body>
+</html>
