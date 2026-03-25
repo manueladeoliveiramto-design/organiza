@@ -1004,7 +1004,7 @@
 </div>
 
 <!-- Modal para reunião em tela cheia -->
-<div class="modal-overlay" id="modal-meeting" style="display:flex;align-items:center;justify-content:center;padding:20px;">
+<div class="modal-overlay" id="modal-meeting">
   <div class="modal" style="width:90%;max-width:800px;max-height:90vh;overflow-y:auto;">
     <div class="modal-title" id="meeting-modal-title">Editar Reunião</div>
     <div class="form-group">
@@ -1593,7 +1593,27 @@ document.getElementById('modal-edit-rule').addEventListener('click', function(e)
 document.getElementById('modal-edit-notice').addEventListener('click', function(e) { if(e.target===this) closeEditNoticeModal(); });
 document.getElementById('modal-idea').addEventListener('click', function(e) { if(e.target===this) closeIdeaModal(); });
 document.getElementById('modal-responsibility').addEventListener('click', function(e) { if(e.target===this) closeResponsibilityModal(); });
-document.getElementById('modal-meeting').addEventListener('click', function(e) { if(e.target===this) closeMeetingModal(); });
+document.getElementById('modal-meeting').addEventListener('click', function(e) { 
+  if(e.target === this || e.target === document.getElementById('modal-meeting')) {
+    closeMeetingModal();
+  }
+});
+
+// Fechar modals com ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const modals = document.querySelectorAll('.modal-overlay.open');
+    if (modals.length > 0) {
+      const lastModal = modals[modals.length - 1];
+      if (lastModal.id === 'modal-task') closeModal();
+      else if (lastModal.id === 'modal-edit-rule') closeEditRuleModal();
+      else if (lastModal.id === 'modal-edit-notice') closeEditNoticeModal();
+      else if (lastModal.id === 'modal-idea') closeIdeaModal();
+      else if (lastModal.id === 'modal-responsibility') closeResponsibilityModal();
+      else if (lastModal.id === 'modal-meeting') closeMeetingModal();
+    }
+  }
+});
 </script>
 </body>
 </html>
