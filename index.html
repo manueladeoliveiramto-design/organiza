@@ -1,1122 +1,1776 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cerimônias — Marketing</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-
-<!-- Firebase compat (funciona sem module/import) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+<title>Sistema de Marketing — Cerimônias</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#ffffff;--bg2:#f4fdf8;--bg3:#e8f8f0;
-  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
-  --gold:#1a7a50;--gold2:#25a06a;--goldbg:#e6f9f1;
-  --sage:#0d6e45;--sagebg:#d6f5e8;
-  --earth:#2d7a5a;--text:#0d1f17;--text2:#3a5a4a;--text3:#7a9a8a;
-  --danger:#b04030;--dangerbg:#fdf0ee;
-  --info:#0d6e8a;--infobg:#e6f5f9;
-  --accent:#5effbc;--accent-dark:#1a7a50;--accent-mid:#2ec884;
-  --sidebar:228px;
+  :root {
+    --bg: #0e0f0d;
+    --bg2: #161710;
+    --bg3: #1d1f18;
+    --card: #1a1c16;
+    --border: rgba(99,255,198,0.12);
+    --border2: rgba(99,255,198,0.22);
+    --gold: #63ffc6;
+    --gold2: #7fffdb;
+    --sage: #7a9e6e;
+    --sage2: #9ab88a;
+    --earth: #8b6b4a;
+    --text: #e8e4d8;
+    --text2: #a09880;
+    --text3: #6a6450;
+    --accent: #63ffc6;
+    --danger: #c4624a;
+    --info: #5a8fa0;
+    --success: #6a9e5a;
+    --warn: #c4904a;
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘DM Sans’, sans-serif;
+background: var(–bg);
+color: var(–text);
+min-height: 100vh;
+font-size: 14px;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;}
 
-/* AUTH */
-#auth-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d1f17,#1a3d2b,#0d2e1e);display:flex;align-items:center;justify-content:center;z-index:9999;}
-#auth-screen.hidden{display:none;}
-.auth-box{background:rgba(255,255,255,.05);border:1px solid rgba(94,255,188,.15);border-radius:20px;padding:48px 40px;width:380px;max-width:90vw;text-align:center;backdrop-filter:blur(20px);}
-.auth-logo{font-family:'Cormorant Garamond',serif;font-size:48px;color:#5effbc;margin-bottom:4px;}
-.auth-brand{font-family:'Cormorant Garamond',serif;font-size:26px;color:rgba(255,255,255,.85);font-weight:300;margin-bottom:4px;}
-.auth-sub{font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.12em;text-transform:uppercase;margin-bottom:32px;}
-.auth-desc{font-size:13px;color:rgba(255,255,255,.4);margin-bottom:28px;line-height:1.6;}
-.btn-google{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 20px;background:rgba(255,255,255,.93);border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:#1a1a1a;cursor:pointer;transition:all .15s;}
-.btn-google:hover{background:#fff;box-shadow:0 4px 24px rgba(94,255,188,.3);transform:translateY(-1px);}
-.btn-google svg{width:18px;height:18px;flex-shrink:0;}
-#auth-error{display:none;margin-top:14px;padding:10px 14px;background:rgba(176,64,48,.2);border:1px solid rgba(176,64,48,.4);border-radius:8px;font-size:12px;color:#ffb4a8;text-align:left;line-height:1.5;}
+/* Login Screen */
+.login-screen {
+display: flex;
+align-items: center;
+justify-content: center;
+min-height: 100vh;
+background: linear-gradient(135deg, #0e0f0d 0%, #161710 100%);
+}
+.login-container {
+background: var(–card);
+border: 1px solid var(–border2);
+border-radius: 16px;
+padding: 48px 40px;
+width: 100%;
+max-width: 400px;
+text-align: center;
+}
+.login-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 32px;
+font-weight: 300;
+color: var(–gold);
+margin-bottom: 12px;
+letter-spacing: .01em;
+}
+.login-subtitle {
+font-size: 13px;
+color: var(–text3);
+margin-bottom: 32px;
+letter-spacing: .05em;
+text-transform: uppercase;
+}
+.login-form {
+display: flex;
+flex-direction: column;
+gap: 16px;
+}
+.login-input {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 8px;
+padding: 12px 16px;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 14px;
+outline: none;
+transition: all .15s;
+}
+.login-input:focus {
+border-color: var(–gold);
+background: rgba(99,255,198,0.05);
+}
+.login-button {
+background: linear-gradient(135deg, rgba(99,255,198,0.15) 0%, rgba(99,255,198,0.08) 100%);
+border: 1px solid var(–gold);
+border-radius: 8px;
+padding: 12px 20px;
+color: var(–gold);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 14px;
+font-weight: 500;
+cursor: pointer;
+transition: all .15s;
+text-transform: uppercase;
+letter-spacing: .05em;
+}
+.login-button:hover {
+background: rgba(99,255,198,0.2);
+border-color: var(–gold2);
+}
+.login-error {
+color: var(–danger);
+font-size: 12px;
+margin-top: 12px;
+display: none;
+}
+.login-error.show {
+display: block;
+}
 
-/* APP */
-#app{display:none;}
-#app.visible{display:flex;min-height:100vh;}
-.sidebar{width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column;overflow-y:auto;}
-.main{margin-left:var(--sidebar);flex:1;padding:36px 40px;max-width:calc(100vw - var(--sidebar));}
-.page{display:none;}.page.active{display:block;}
-.sb-logo{padding:24px 20px 20px;border-bottom:2px solid var(--accent);}
-.sb-logo-name{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--text);line-height:1.2;}
-.sb-logo-sub{font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-top:3px;}
-.sb-nav{padding:10px;flex:1;}
-.nav-item{display:flex;align-items:center;gap:10px;width:100%;padding:9px 12px;border-radius:8px;border:none;background:none;color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-align:left;transition:all .12s;}
-.nav-item:hover{background:var(--bg3);color:var(--text);}
-.nav-item.active{background:var(--goldbg);color:var(--accent-dark);font-weight:500;border-left:3px solid var(--accent);}
-.nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
-.sb-user{padding:12px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
-.sb-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-dark);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:600;flex-shrink:0;overflow:hidden;}
-.sb-avatar img{width:100%;height:100%;object-fit:cover;display:none;}
-.sb-user-info{flex:1;min-width:0;}
-.sb-user-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sb-user-email{font-size:10px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.btn-out{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:2px;flex-shrink:0;}
-.btn-out:hover{color:var(--danger);}
-.page-header{margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
-.page-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;}
-.page-sub{font-size:13px;color:var(--text3);margin-top:3px;}
-.card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;}
-.card-title{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-bottom:10px;}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-.stat-val{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--accent-dark);line-height:1;}
-.stat-label{font-size:12px;color:var(--text2);margin-top:5px;}
-.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;}
-.b-disp{background:var(--infobg);color:var(--info);}
-.b-cont{background:var(--sagebg);color:var(--sage);}
-.b-grup{background:var(--goldbg);color:var(--gold);}
-.b-mkt{background:#f5f0ff;color:#5a3a9a;}
-.b-sess{background:var(--dangerbg);color:var(--danger);}
-.b-meet{background:var(--bg3);color:var(--text2);border:1px solid var(--border);}
-.btn{padding:8px 18px;border-radius:8px;border:1px solid var(--border2);background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .12s;}
-.btn:hover{background:var(--bg3);}
-.btn-primary{background:var(--goldbg);border-color:var(--gold2);color:var(--gold);}
-.btn-primary:hover{background:var(--sagebg);}
-.btn-danger{background:var(--dangerbg);border-color:#d07060;color:var(--danger);}
-.btn-sm{padding:5px 12px;font-size:12px;}
-.form-group{margin-bottom:14px;}
-.form-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px;display:block;}
-.form-input,.form-select,.form-textarea{width:100%;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .12s;}
-.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--accent-mid);}
-.form-textarea{min-height:80px;resize:vertical;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:200;align-items:center;justify-content:center;padding:20px;}
-.overlay.open{display:flex;}
-.modal{background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:28px;width:560px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.1);}
-.modal-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;margin-bottom:20px;}
-.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);}
-.detail-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:300;overflow-y:auto;padding:40px 48px;}
-.detail-screen.open{display:block;}
-.detail-back{display:flex;align-items:center;gap:8px;color:var(--text3);cursor:pointer;font-size:13px;margin-bottom:28px;}
-.detail-back:hover{color:var(--text);}
-.cal-nav{display:flex;align-items:center;gap:16px;margin-bottom:12px;}
-.cal-nav h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;min-width:180px;text-align:center;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
-.cal-hdr{text-align:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);padding:8px 0 10px;}
-.cal-day{min-height:90px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px;position:relative;overflow:hidden;}
-.cal-day:not(.empty):hover{border-color:var(--border2);cursor:pointer;}
-.cal-day.empty{background:transparent;border-color:transparent;}
-.cal-day.today{border-color:var(--accent-mid);border-width:1.5px;}
-.cal-day.sess-day{background:var(--sagebg);border-color:var(--sage);}
-.cal-day-num{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:3px;}
-.cal-day.today .cal-day-num{color:var(--accent-dark);}
-.cal-task{font-size:10px;padding:2px 4px;border-radius:3px;margin-bottom:2px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:block;}
-.ct-disp{background:var(--infobg);color:var(--info);}
-.ct-cont{background:var(--sagebg);color:var(--sage);}
-.ct-grup{background:var(--goldbg);color:var(--gold);}
-.ct-mkt{background:#f5f0ff;color:#5a3a9a;}
-.ct-sess{background:var(--dangerbg);color:var(--danger);}
-.ct-meet{background:var(--bg3);color:var(--text2);}
-.cal-add{position:absolute;top:3px;right:3px;width:16px;height:16px;border-radius:50%;background:var(--bg3);border:1px solid var(--border);font-size:11px;display:none;align-items:center;justify-content:center;cursor:pointer;color:var(--text3);line-height:1;}
-.cal-day:not(.empty):hover .cal-add{display:flex;}
-.cal-tab-bar{display:flex;border-bottom:1px solid var(--border);margin-bottom:18px;}
-.cal-tab{background:none;border:none;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s;}
-.cal-tab.active{color:var(--text);border-bottom-color:var(--accent-mid);}
-.ev-table{width:100%;border-collapse:collapse;font-size:13px;}
-.ev-table th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:8px 12px;border-bottom:2px solid var(--border);font-weight:500;background:var(--bg2);}
-.ev-table td{padding:0;border-bottom:1px solid var(--border);vertical-align:middle;}
-.ev-table tr:hover td{background:var(--bg2);}
-.ev-cell-edit{width:100%;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;padding:9px 12px;}
-.ev-cell-edit:focus{background:var(--goldbg);}
-.ev-cell-sel{width:100%;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);outline:none;padding:9px 10px;cursor:pointer;}
-.ev-cell-sel:focus{background:var(--goldbg);}
-.ev-actions-cell{white-space:nowrap;padding:6px 10px;text-align:center;}
-.list-toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
-.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);margin:2px;}
-.tab-btn{background:none;border:none;padding:10px 16px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .12s;}
-.tab-btn:hover,.tab-btn.active{color:var(--text);border-bottom-color:var(--accent-mid);}
-.invite-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px;position:relative;}
-.art-upload-zone{border:2px dashed var(--border2);border-radius:12px;padding:32px;text-align:center;cursor:pointer;color:var(--text3);transition:border-color .15s;}
-.art-upload-zone:hover{border-color:var(--accent-mid);color:var(--accent-dark);}
-.art-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:16px;}
-.art-item{border:1px solid var(--border);border-radius:10px;overflow:hidden;position:relative;background:var(--bg3);}
-.art-item img{width:100%;aspect-ratio:1;object-fit:cover;display:block;}
-.art-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;gap:8px;opacity:0;transition:opacity .15s;}
-.art-item:hover .art-overlay{opacity:1;}
-.art-overlay button{background:rgba(255,255,255,.92);border:none;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;}
-.rule-card{border-left:3px solid var(--accent-mid);padding:14px 16px;background:var(--bg);border:1px solid var(--border);border-left-width:3px;border-radius:0 10px 10px 0;margin-bottom:10px;}
-.rule-title-edit{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-weight:500;font-size:14px;color:var(--text);outline:none;width:100%;}
-.rule-edit-area{width:100%;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text2);line-height:1.6;resize:vertical;min-height:56px;outline:none;}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--goldbg);border:1px solid var(--gold2);color:var(--gold);padding:9px 18px;border-radius:8px;font-size:12px;z-index:9998;opacity:0;transition:opacity .2s;pointer-events:none;}
-.toast.show{opacity:1;}
-body::before{content:'';display:block;position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent-mid));z-index:9999;}
-::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-thumb{background:var(--accent-mid);border-radius:3px;}
-@media(max-width:860px){
-  :root{--sidebar:52px;}
-  .sb-logo-name,.sb-logo-sub,.nav-item span:not(.nav-icon),.sb-user-info{display:none;}
-  .nav-item{justify-content:center;padding:10px;}
-  .main{padding:20px 16px;}
-  .grid-3{grid-template-columns:1fr 1fr;}
+/* Layout */
+.app { display: flex; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+width: 220px;
+background: var(–bg2);
+border-right: 1px solid var(–border);
+display: flex;
+flex-direction: column;
+position: fixed;
+top: 0; left: 0; bottom: 0;
+z-index: 100;
+padding: 28px 0;
+}
+
+.sidebar-logo {
+padding: 0 20px 24px;
+border-bottom: 1px solid var(–border);
+margin-bottom: 20px;
+}
+.sidebar-logo .logo-icon {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 22px;
+color: var(–gold);
+letter-spacing: .03em;
+line-height: 1.2;
+}
+.sidebar-logo .logo-sub {
+font-size: 10px;
+color: var(–text3);
+letter-spacing: .12em;
+text-transform: uppercase;
+margin-top: 2px;
+}
+
+.nav-section {
+padding: 0 12px;
+margin-bottom: 6px;
+}
+.nav-label {
+font-size: 10px;
+letter-spacing: .1em;
+text-transform: uppercase;
+color: var(–text3);
+padding: 0 8px;
+margin-bottom: 4px;
+margin-top: 16px;
+}
+.nav-item {
+display: flex;
+align-items: center;
+gap: 10px;
+padding: 9px 12px;
+border-radius: 8px;
+cursor: pointer;
+color: var(–text2);
+font-size: 13px;
+transition: all .15s;
+border: none;
+background: none;
+width: 100%;
+text-align: left;
+}
+.nav-item:hover { background: rgba(180,170,120,0.07); color: var(–text); }
+.nav-item.active { background: rgba(180,170,120,0.12); color: var(–gold); }
+.nav-icon { font-size: 15px; width: 18px; text-align: center; flex-shrink: 0; }
+
+/* Main */
+.main {
+margin-left: 220px;
+flex: 1;
+padding: 32px 36px;
+max-width: calc(100vw - 220px);
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header {
+margin-bottom: 28px;
+padding-bottom: 20px;
+border-bottom: 1px solid var(–border);
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 12px;
+}
+.page-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 28px;
+font-weight: 300;
+color: var(–text);
+letter-spacing: .01em;
+}
+.page-sub { font-size: 13px; color: var(–text3); margin-top: 4px; }
+
+/* Cards */
+.card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 20px;
+}
+.card-title {
+font-size: 12px;
+text-transform: uppercase;
+letter-spacing: .1em;
+color: var(–text3);
+margin-bottom: 10px;
+}
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+
+/* Stat cards */
+.stat-val {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 36px;
+font-weight: 300;
+color: var(–gold);
+line-height: 1;
+}
+.stat-label { font-size: 12px; color: var(–text2); margin-top: 6px; }
+.stat-delta { font-size: 11px; margin-top: 4px; }
+.up { color: var(–sage); }
+.down { color: var(–danger); }
+.neu { color: var(–text3); }
+
+/* Badges */
+.badge {
+display: inline-block;
+padding: 3px 10px;
+border-radius: 20px;
+font-size: 11px;
+font-weight: 500;
+}
+.b-disp { background: rgba(90,143,160,.18); color: #7ec4d8; }
+.b-cont { background: rgba(106,158,90,.18); color: var(–sage2); }
+.b-grup { background: rgba(196,176,110,.15); color: var(–gold2); }
+.b-mkt  { background: rgba(138,106,74,.2); color: #c4986a; }
+.b-sess { background: rgba(180,70,50,.2); color: #e47a60; }
+.b-meet { background: rgba(160,152,128,.12); color: var(–text2); border: 1px solid var(–border); }
+
+/* Buttons */
+.btn {
+padding: 8px 18px;
+border-radius: 8px;
+border: 1px solid var(–border2);
+background: transparent;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 13px;
+cursor: pointer;
+transition: all .15s;
+}
+.btn:hover { background: rgba(180,170,120,0.08); border-color: var(–gold); color: var(–gold); }
+.btn-primary {
+background: rgba(184,169,106,0.15);
+border-color: var(–gold);
+color: var(–gold);
+}
+.btn-primary:hover { background: rgba(184,169,106,0.25); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn-danger { border-color: rgba(196,98,74,.4); color: var(–danger); }
+.btn-danger:hover { background: rgba(196,98,74,.1); }
+
+/* Calendar */
+.cal-nav {
+display: flex;
+align-items: center;
+gap: 16px;
+margin-bottom: 20px;
+}
+.cal-nav h3 {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 22px;
+font-weight: 300;
+min-width: 200px;
+text-align: center;
+}
+
+.cal-grid {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 3px;
+}
+.cal-day-header {
+text-align: center;
+font-size: 11px;
+letter-spacing: .08em;
+text-transform: uppercase;
+color: var(–text3);
+padding: 8px 4px;
+font-weight: 500;
+}
+.cal-day {
+min-height: 110px;
+height: 110px;
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 8px;
+padding: 6px;
+cursor: pointer;
+transition: border-color .15s;
+position: relative;
+display: flex;
+flex-direction: column;
+overflow: hidden;
+}
+.cal-day:hover { border-color: var(–border2); }
+.cal-day.empty { background: transparent; border-color: transparent; cursor: default; }
+.cal-day.today { border-color: var(–gold); }
+.cal-day.session-day { border-color: var(–sage); background: rgba(106,158,90,0.06); }
+.cal-day-num {
+font-size: 12px;
+color: var(–text2);
+margin-bottom: 4px;
+font-weight: 500;
+}
+.cal-day.today .cal-day-num { color: var(–gold); }
+.cal-day.session-day .cal-day-num { color: var(–sage2); }
+.cal-task {
+font-size: 10px;
+padding: 2px 5px;
+border-radius: 4px;
+margin-bottom: 2px;
+line-height: 1.3;
+cursor: pointer;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+flex-shrink: 0;
+}
+.ct-disp { background: rgba(90,143,160,.2); color: #7ec4d8; }
+.ct-cont { background: rgba(106,158,90,.2); color: var(–sage2); }
+.ct-grup { background: rgba(196,176,110,.15); color: var(–gold2); }
+.ct-mkt  { background: rgba(138,106,74,.2); color: #c4986a; }
+.ct-sess { background: rgba(180,70,50,.25); color: #e47a60; }
+.ct-meet { background: rgba(160,152,128,.15); color: var(–text2); }
+
+/* Task editor */
+.modal-overlay {
+display: none;
+position: fixed; inset: 0;
+background: rgba(0,0,0,.7);
+z-index: 200;
+align-items: center;
+justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+background: var(–bg2);
+border: 1px solid var(–border2);
+border-radius: 16px;
+padding: 28px;
+width: 500px;
+max-width: 95vw;
+max-height: 90vh;
+overflow-y: auto;
+}
+.modal-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 22px;
+font-weight: 300;
+margin-bottom: 20px;
+color: var(–gold);
+}
+
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(–text3); margin-bottom: 6px; display: block; }
+.form-input, .form-select, .form-textarea {
+width: 100%;
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 8px;
+padding: 10px 12px;
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+font-size: 13px;
+outline: none;
+transition: border-color .15s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(–gold); }
+.form-textarea { min-height: 80px; resize: vertical; }
+.form-select option { background: var(–bg3); }
+
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+/* Funil */
+.funnel-stage {
+display: flex;
+gap: 16px;
+padding: 18px;
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 12px;
+margin-bottom: 10px;
+align-items: flex-start;
+}
+.funnel-num {
+width: 32px; height: 32px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px;
+font-weight: 300;
+flex-shrink: 0;
+}
+.funnel-arrow { text-align: center; color: var(–text3); margin: -2px 0; font-size: 18px; }
+.funnel-body h4 { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+.funnel-body p { font-size: 13px; color: var(–text2); line-height: 1.5; }
+.funnel-action { font-size: 12px; color: var(–text3); margin-top: 8px; padding-top: 8px; border-top: 1px solid var(–border); }
+
+/* TikTok */
+.tiktok-card {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 16px;
+margin-bottom: 12px;
+}
+.tiktok-week { font-size: 11px; color: var(–text3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+.tiktok-title { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+.tiktok-hook { font-family: ‘Cormorant Garamond’, serif; font-size: 16px; font-style: italic; color: var(–text2); margin-bottom: 8px; line-height: 1.4; }
+.tiktok-desc { font-size: 12px; color: var(–text3); }
+.pill { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; margin-right: 4px; }
+.p-edu { background: rgba(90,143,160,.15); color: #7ec4d8; }
+.p-dep { background: rgba(138,106,180,.15); color: #b89ade; }
+.p-mis { background: rgba(196,144,74,.15); color: #d4a870; }
+.p-esp { background: rgba(106,158,90,.15); color: var(–sage2); }
+
+/* Responsáveis */
+.team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 12px; }
+.team-card {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 16px;
+text-align: center;
+}
+.team-avatar {
+width: 44px; height: 44px;
+border-radius: 50%;
+background: rgba(184,169,106,0.15);
+border: 1px solid var(–border2);
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px;
+color: var(–gold);
+margin: 0 auto 10px;
+}
+.team-name { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+.team-role { font-size: 12px; color: var(–text3); }
+
+/* Progress bar */
+.progress-bar { background: var(–bg3); border-radius: 4px; height: 6px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; background: var(–gold); transition: width .3s; }
+
+/* Leads */
+.lead-row {
+display: grid;
+grid-template-columns: 1fr 100px 100px 80px;
+gap: 12px;
+padding: 12px 0;
+border-bottom: 1px solid var(–border);
+align-items: center;
+}
+.lead-row:last-child { border-bottom: none; }
+.lead-name { font-size: 13px; font-weight: 500; }
+.lead-date { font-size: 12px; color: var(–text3); }
+.lead-status {
+font-size: 11px;
+padding: 3px 10px;
+border-radius: 20px;
+text-align: center;
+}
+.ls-quente { background: rgba(180,70,50,.2); color: #e47a60; }
+.ls-morno  { background: rgba(196,144,74,.2); color: #d4a870; }
+.ls-frio   { background: rgba(90,143,160,.15); color: #7ec4d8; }
+.ls-novo   { background: rgba(106,158,90,.2); color: var(–sage2); }
+
+/* Regras */
+.rule-card {
+border-left: 3px solid var(–gold);
+padding: 14px 16px;
+background: var(–bg3);
+border-radius: 0 10px 10px 0;
+margin-bottom: 10px;
+}
+.rule-card.sage { border-color: var(–sage); }
+.rule-card.earth { border-color: var(–earth); }
+.rule-card.info  { border-color: var(–info); }
+.rule-title { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+.rule-desc { font-size: 13px; color: var(–text2); line-height: 1.5; }
+
+/* Cronograma responsáveis */
+.sched-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sched-table th {
+text-align: left; padding: 10px 12px;
+font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+color: var(–text3); border-bottom: 1px solid var(–border);
+font-weight: 400;
+}
+.sched-table td { padding: 10px 12px; border-bottom: 1px solid var(–border); vertical-align: middle; }
+.sched-table tr:last-child td { border-bottom: none; }
+.name-tag {
+display: inline-block;
+padding: 3px 10px;
+border-radius: 20px;
+font-size: 12px;
+background: rgba(184,169,106,0.1);
+border: 1px solid rgba(184,169,106,0.2);
+color: var(–gold2);
+margin: 2px;
+}
+
+/* Reunião */
+.meeting-item {
+display: grid;
+grid-template-columns: 72px 1fr;
+gap: 14px;
+margin-bottom: 14px;
+align-items: start;
+}
+.meeting-time {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px;
+font-weight: 300;
+color: var(–gold);
+padding-top: 2px;
+}
+.meeting-body {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 10px;
+padding: 14px;
+}
+.meeting-body h4 { font-weight: 500; font-size: 14px; margin-bottom: 4px; }
+.meeting-body p { font-size: 13px; color: var(–text2); line-height: 1.5; }
+.meeting-sub { font-size: 12px; color: var(–text3); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(–border); }
+
+/* Meeting Card (Atas) */
+.meeting-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 18px;
+margin-bottom: 14px;
+cursor: pointer;
+transition: all .15s;
+}
+.meeting-card:hover { border-color: var(–border2); background: var(–bg3); }
+.meeting-card-header {
+display: grid;
+grid-template-columns: 1fr auto;
+align-items: center;
+gap: 12px;
+}
+.meeting-card-title {
+font-family: ‘Cormorant Garamond’, serif;
+font-size: 18px;
+font-weight: 300;
+color: var(–text);
+}
+.meeting-card-date {
+font-size: 12px;
+color: var(–text3);
+margin-top: 2px;
+}
+.meeting-card-actions {
+display: flex;
+gap: 6px;
+}
+
+/* Ideas section */
+.idea-card {
+background: var(–bg3);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 16px 18px;
+margin-bottom: 10px;
+cursor: pointer;
+transition: border-color .15s;
+}
+.idea-card:hover { border-color: var(–border2); }
+.idea-card h4 { font-weight: 500; font-size: 14px; margin-bottom: 6px; }
+.idea-card p { font-size: 13px; color: var(–text2); line-height: 1.5; }
+.idea-tag { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 20px; margin-bottom: 8px; }
+.it-curto  { background: rgba(106,158,90,.15); color: var(–sage2); }
+.it-medio  { background: rgba(196,176,110,.12); color: var(–gold2); }
+.it-longo  { background: rgba(90,143,160,.15); color: #7ec4d8; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(–bg); }
+::-webkit-scrollbar-thumb { background: var(–border2); border-radius: 3px; }
+
+/* Notice bar */
+.notice {
+background: rgba(184,169,106,0.08);
+border: 1px solid rgba(184,169,106,0.2);
+border-radius: 8px;
+padding: 10px 14px;
+font-size: 13px;
+color: var(–text2);
+margin-bottom: 20px;
+line-height: 1.5;
+}
+.notice strong { color: var(–gold); }
+
+.sep { height: 1px; background: var(–border); margin: 24px 0; }
+
+@media (max-width: 800px) {
+.sidebar { width: 56px; }
+.sidebar .logo-icon, .sidebar .logo-sub, .nav-item span:not(.nav-icon), .nav-label { display: none; }
+.main { margin-left: 56px; padding: 20px; }
+.grid-4 { grid-template-columns: repeat(2,1fr); }
+.grid-3 { grid-template-columns: 1fr 1fr; }
 }
 </style>
+
 </head>
 <body>
-
-<!-- AUTH -->
-<div id="auth-screen">
-  <div class="auth-box">
-    <div class="auth-logo">🌿</div>
-    <div class="auth-brand">Cerimônias</div>
-    <div class="auth-sub">Sistema de Marketing</div>
-    <div class="auth-desc">Área restrita ao time.<br>Entre com sua conta Google autorizada.</div>
-    <button class="btn-google" onclick="loginGoogle()">
-      <svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-      Entrar com Google
-    </button>
-    <div id="auth-error"></div>
+<!-- Login Screen -->
+<div class="login-screen" id="login-screen">
+  <div class="login-container">
+    <div class="login-title">🌿 Cerimônias</div>
+    <div class="login-subtitle">Sistema de Marketing</div>
+    <div class="login-form">
+      <input class="login-input" id="password-input" type="password" placeholder="Digite a senha..." onkeypress="if(event.key==='Enter') checkPassword()">
+      <button class="login-button" onclick="checkPassword()">Entrar</button>
+      <div class="login-error" id="login-error">Senha incorreta</div>
+    </div>
   </div>
 </div>
 
-<!-- APP -->
-<div id="app">
+<div class="app" id="app" style="display:none;">
+
+<!-- Sidebar -->
+
 <nav class="sidebar">
-  <div class="sb-logo">
-    <div class="sb-logo-name">🌿 Cerimônias</div>
-    <div class="sb-logo-sub">Marketing</div>
+  <div class="sidebar-logo">
+    <div class="logo-icon">🌿 Cerimônias</div>
+    <div class="logo-sub">Sistema de Marketing</div>
   </div>
-  <div class="sb-nav" id="sb-nav"></div>
-  <div class="sb-user">
-    <div class="sb-avatar" id="sb-avatar-wrap">
-      <img id="sb-avatar-img" src="" alt="">
-      <span id="sb-avatar-init"></span>
-    </div>
-    <div class="sb-user-info">
-      <div class="sb-user-name" id="sb-uname"></div>
-      <div class="sb-user-email" id="sb-uemail"></div>
-    </div>
-    <button class="btn-out" title="Sair" onclick="doSignOut()">⏻</button>
+  <div class="nav-section">
+    <div class="nav-label">Visão Geral</div>
+    <button class="nav-item active" onclick="goTo('dashboard')">
+      <span class="nav-icon">◈</span><span>Dashboard</span>
+    </button>
+    <button class="nav-item" onclick="goTo('calendario')">
+      <span class="nav-icon">◷</span><span>Calendário</span>
+    </button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Estratégia</div>
+    <button class="nav-item" onclick="goTo('funil')">
+      <span class="nav-icon">▽</span><span>Funil</span>
+    </button>
+    <button class="nav-item" onclick="goTo('ideias')">
+      <span class="nav-icon">✦</span><span>Ideias</span>
+    </button>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Operacional</div>
+    <button class="nav-item" onclick="goTo('reuniao')">
+      <span class="nav-icon">◆</span><span>Reuniões</span>
+    </button>
+    <button class="nav-item" onclick="goTo('lembrete')">
+      <span class="nav-icon">◇</span><span>Lembre-se</span>
+    </button>
   </div>
 </nav>
+
+<!-- Main -->
+
 <main class="main">
 
-<!-- DASHBOARD -->
-<div id="page-dashboard" class="page active">
-  <div class="page-header">
-    <div>
-      <div class="page-title">Dashboard</div>
-      <div class="page-sub">Próxima sessão: <span id="db-sess-label">—</span> · <span id="db-countdown"></span></div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <label style="font-size:12px;color:var(--text3);">Data da sessão:</label>
-      <input type="date" class="form-input" id="sess-picker" style="width:160px;padding:6px 10px;" onchange="saveSessDate(this.value)">
+  <!-- DASHBOARD -->
+
+  <div id="page-dashboard" class="page active">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Sessões: 26 e 27 de abril · <span id="countdown-text">carregando...</span></div>
+      </div>
       <button class="btn btn-primary" onclick="goTo('calendario')">Ver calendário →</button>
     </div>
+
+```
+<div class="notice" id="notice-display" style="cursor:pointer;position:relative;" onmouseover="document.getElementById('notice-edit-btn').style.opacity='1'" onmouseout="document.getElementById('notice-edit-btn').style.opacity='0.5'">
+  <strong>Próxima ação hoje:</strong> <span id="notice-text">Disparos individuais (todos os fardados) + reunião de marketing (alinhamento + Manuela ensina ferramenta de agendamento).</span>
+  <button class="btn btn-sm" id="notice-edit-btn" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);opacity:0.5;transition:opacity .2s;" onclick="openEditNoticeModal()">✎</button>
+</div>
+
+<div class="grid-4" style="margin-bottom:24px;">
+  <div class="card">
+    <div class="card-title">Leads totais</div>
+    <div class="stat-val" id="stat-leads">230</div>
+    <div class="stat-label">base cadastrada</div>
+    <div class="stat-delta neu">maioria fora da cidade</div>
   </div>
-  <div class="grid-3" style="margin-bottom:20px;">
-    <div class="card"><div class="card-title">Dias até sessão</div><div class="stat-val" id="st-days">—</div><div class="stat-label" id="st-days-lbl">Defina a data acima</div></div>
-    <div class="card"><div class="card-title">Semanas restantes</div><div class="stat-val" id="st-weeks">—</div><div class="stat-label">de ação disponível</div></div>
-    <div class="card" style="cursor:pointer;border-color:var(--accent-mid);" onclick="openConfirmados()">
-      <div class="card-title">Confirmados</div>
-      <div class="stat-val" id="st-conf">0</div>
-      <div class="stat-label">visitantes confirmados</div>
-      <div style="font-size:11px;color:var(--accent-dark);margin-top:6px;">clique para gerenciar →</div>
-    </div>
+  <div class="card">
+    <div class="card-title">Dias até sessão</div>
+    <div class="stat-val" id="stat-days">—</div>
+    <div class="stat-label">26 de abril</div>
+    <div class="stat-delta" id="stat-days-color">em contagem</div>
   </div>
-  <div class="card" style="margin-bottom:20px;"><div class="card-title">Próximas ações</div><div id="upcoming-tasks"><div style="color:var(--text3);font-size:13px;padding:8px 0;">Nenhuma tarefa cadastrada.</div></div></div>
-  <div class="card" style="background:var(--goldbg);border-color:rgba(26,122,80,.15);">
-    <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;">Frase motivacional · clique para editar</div>
-    <textarea id="quote-edit" style="width:100%;border:none;background:transparent;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--accent-dark);line-height:1.5;resize:none;outline:none;overflow:hidden;" oninput="autoResize(this)" onblur="saveQuote()"></textarea>
+  <div class="card">
+    <div class="card-title">Fardados ativos</div>
+    <div class="stat-val">5</div>
+    <div class="stat-label">André, Karol, Manuela, Volmar, Luis</div>
+    <div class="stat-delta up">todos engajados</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Semanas até sessão</div>
+    <div class="stat-val" id="stat-weeks">—</div>
+    <div class="stat-label">de ação</div>
+    <div class="stat-delta neu">use cada uma</div>
   </div>
 </div>
 
-<!-- CONVITES -->
-<div id="page-convites" class="page">
-  <div class="page-header">
-    <div><div class="page-title">Convites</div><div class="page-sub">Modelos de texto e artes</div></div>
-    <button class="btn btn-primary" id="btn-add-conv" onclick="openAddTemplate()">+ Modelo de texto</button>
-  </div>
-  <div style="display:flex;margin-bottom:20px;border-bottom:1px solid var(--border);">
-    <button class="tab-btn active" id="tab-textos" onclick="switchConvTab('textos')">Modelos de texto</button>
-    <button class="tab-btn" id="tab-artes" onclick="switchConvTab('artes')">Artes</button>
-  </div>
-  <div id="conv-textos"><div id="templates-list"></div></div>
-  <div id="conv-artes" style="display:none;">
-    <div class="art-upload-zone" onclick="document.getElementById('art-input').click()">
-      <input type="file" id="art-input" accept="image/*" multiple onchange="handleArtUpload(this)" style="display:none;">
-      <div style="font-size:28px;margin-bottom:8px;">↑</div>
-      <div style="font-size:14px;font-weight:500;margin-bottom:4px;">Clique para fazer upload</div>
-      <div style="font-size:12px;">PNG, JPG, WEBP · múltiplos arquivos</div>
-    </div>
-    <div class="art-grid" id="art-grid"></div>
-  </div>
-</div>
+<div class="grid-2" style="margin-bottom:24px;">
+  <div class="card">
+    <div class="card-title">Progresso do plano</div>
+    <div style="margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:13px;color:var(--text2);">Disparos iniciados</span>
+        <span style="font-size:12px;color:var(--text3);">hoje</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:5%;background:var(--info);"></div></div>
 
-<!-- CALENDÁRIO -->
-<div id="page-calendario" class="page">
-  <div class="page-header">
-    <div><div class="page-title">Calendário</div><div class="page-sub">Gerencie todos os eventos</div></div>
-    <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;">
-      <span class="badge b-disp">Disparo</span><span class="badge b-cont">Conteúdo</span><span class="badge b-grup">Grupo</span><span class="badge b-mkt">Mkt</span><span class="badge b-sess">Sessão</span><span class="badge b-meet">Reunião</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
+        <span style="font-size:13px;color:var(--text2);">Vídeos gravados</span>
+        <span style="font-size:12px;color:var(--text3);">0/5</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
+        <span style="font-size:13px;color:var(--text2);">TikTok ativo</span>
+        <span style="font-size:12px;color:var(--text3);">0/8 vídeos</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div></div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:12px 0 6px;">
+        <span style="font-size:13px;color:var(--text2);">Grupo Descobrindo ativo</span>
+        <span style="font-size:12px;color:var(--text3);">pendente</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--sage);"></div></div>
     </div>
   </div>
-  <div class="cal-tab-bar">
-    <button class="cal-tab active" id="caltab-cal" onclick="switchCalTab('cal',this)">📅 Calendário</button>
-    <button class="cal-tab" id="caltab-list" onclick="switchCalTab('list',this)">📋 Lista</button>
-  </div>
-  <div id="cal-view">
-    <div class="cal-nav">
-      <button class="btn btn-sm" onclick="prevMonth()">← anterior</button>
-      <h3 id="cal-title"></h3>
-      <button class="btn btn-sm" onclick="nextMonth()">próximo →</button>
-    </div>
-    <div class="cal-grid" id="cal-grid"></div>
-  </div>
-  <div id="list-view" style="display:none;">
-    <div class="list-toolbar">
-      <button class="btn btn-primary" onclick="openEvModal(null,null)">+ Novo evento</button>
-      <input class="form-input" id="list-search" placeholder="Buscar..." style="max-width:280px;flex:1;" oninput="renderList()">
-      <select class="form-select" id="list-ftype" style="max-width:150px;" onchange="renderList()">
-        <option value="">Todos os tipos</option>
-        <option value="disp">Disparo</option><option value="cont">Conteúdo</option><option value="grup">Grupo</option><option value="mkt">Mkt/Funil</option><option value="sess">Sessão</option><option value="meet">Reunião</option>
-      </select>
-    </div>
-    <div style="overflow-x:auto;border:1px solid var(--border);border-radius:12px;">
-      <table class="ev-table">
-        <thead><tr>
-          <th style="width:120px;">Data</th><th style="width:110px;">Tipo</th><th>Título</th>
-          <th style="width:160px;">Responsáveis</th><th style="width:100px;">Recorrência</th>
-          <th style="width:180px;">Notas</th><th style="width:90px;">Ações</th>
-        </tr></thead>
-        <tbody id="ev-tbody"></tbody>
-      </table>
+
+  <div class="card">
+    <div class="card-title">Próximas ações</div>
+    <div style="margin-top:8px;">
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:start;">
+        <span class="badge b-meet" style="flex-shrink:0;">Hoje</span>
+        <span style="font-size:13px;color:var(--text2);">Reunião de marketing · alinhamento geral + ferramenta</span>
+      </div>
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:start;">
+        <span class="badge b-disp" style="flex-shrink:0;">Hoje</span>
+        <span style="font-size:13px;color:var(--text2);">Disparos individuais — todos os fardados</span>
+      </div>
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:start;">
+        <span class="badge b-cont" style="flex-shrink:0;">Ter 25</span>
+        <span style="font-size:13px;color:var(--text2);">Gravar vídeo depoimento (cada fardado)</span>
+      </div>
+      <div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:start;">
+        <span class="badge b-grup" style="flex-shrink:0;">Qua 26</span>
+        <span style="font-size:13px;color:var(--text2);">Convite no grupo — André</span>
+      </div>
+      <div style="padding:10px 0;display:flex;gap:10px;align-items:start;">
+        <span class="badge b-mkt" style="flex-shrink:0;">Qua 26</span>
+        <span style="font-size:13px;color:var(--text2);">Criar conta TikTok + linha editorial</span>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- PROCESSO -->
-<div id="page-processo" class="page">
-  <div class="page-header">
-    <div><div class="page-title">Processo de Atendimento</div><div class="page-sub">Guidelines e processos operacionais</div></div>
-    <button class="btn btn-primary" onclick="openProcModal(null)">+ Novo card</button>
+<div class="card">
+  <div class="card-title">Regra de ouro</div>
+  <div id="rule-text-display" style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--gold);line-height:1.4;margin-top:8px;cursor:pointer;padding:12px;border-radius:8px;transition:all .2s;" onmouseover="this.style.background='rgba(99,255,198,0.05)'" onmouseout="this.style.background='transparent'" onclick="openEditRuleModal()">
+    "O sucesso da cerimônia depende do compromisso contínuo. Exige dedicação estruturada e execução deliberada."
   </div>
-  <div id="process-list"></div>
+  <div style="font-size:11px;color:var(--text3);margin-top:8px;text-align:right;">clique para editar</div>
+</div>
+```
+
+  </div>
+
+  <!-- CALENDÁRIO -->
+
+  <div id="page-calendario" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Calendário</div>
+        <div class="page-sub">Clique em um dia para adicionar ou editar tarefas</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="badge b-disp">Disparo</span>
+        <span class="badge b-cont">Conteúdo</span>
+        <span class="badge b-grup">Grupo</span>
+        <span class="badge b-mkt">Mkt</span>
+        <span class="badge b-sess">Sessão</span>
+        <span class="badge b-meet">Reunião</span>
+      </div>
+    </div>
+
+```
+<div class="cal-nav">
+  <button class="btn btn-sm" onclick="prevMonth()">← anterior</button>
+  <h3 id="cal-title">—</h3>
+  <button class="btn btn-sm" onclick="nextMonth()">próximo →</button>
 </div>
 
-<!-- REUNIÕES -->
-<div id="page-reunioes" class="page">
-  <div class="page-header">
-    <div><div class="page-title">Reuniões de Marketing</div><div class="page-sub">Arquivo de atas e pautas</div></div>
-    <button class="btn btn-primary" onclick="openMeetModal(null)">+ Nova ata</button>
-  </div>
-  <div id="meetings-list"></div>
+<div class="cal-grid" id="cal-grid"></div>
+
+<div class="sep"></div>
+
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-title">Cronograma de convites no grupo (seg/qua/sab)</div>
+  <table class="sched-table" style="margin-top:12px;">
+    <thead>
+      <tr><th>Semana</th><th>Segunda</th><th>Quarta</th><th>Sábado</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Sem 1 · 24–30 mar</td><td><span class="name-tag">André</span></td><td><span class="name-tag">Karol</span></td><td><span class="name-tag">Manuela</span></td></tr>
+      <tr><td>Sem 2 · 31 mar–6 abr</td><td><span class="name-tag">Volmar</span></td><td><span class="name-tag">Luis A.</span></td><td><span class="name-tag">André</span></td></tr>
+      <tr><td>Sem 3 · 7–13 abr</td><td><span class="name-tag">Karol</span></td><td><span class="name-tag">Manuela</span></td><td><span class="name-tag">Volmar</span></td></tr>
+      <tr><td>Sem 4 · 14–20 abr</td><td><span class="name-tag">Luis A.</span></td><td><span class="name-tag">André</span></td><td><span class="name-tag">Karol</span></td></tr>
+      <tr><td>Sem 5 · 21–27 abr</td><td><span class="name-tag">Manuela</span></td><td><span class="name-tag">Volmar</span></td><td>—</td></tr>
+    </tbody>
+  </table>
 </div>
 
-<!-- REGRAS -->
-<div id="page-regras" class="page">
-  <div class="page-header"><div class="page-title">Regras Gerais</div><div class="page-sub">Clique em qualquer campo para editar inline</div></div>
-  <div id="regras-list"></div>
-  <button class="btn btn-primary" onclick="addRegra()" style="margin-top:12px;">+ Nova regra</button>
+<div class="card">
+  <div class="card-title" style="display:flex;justify-content:space-between;align-items:center;">
+    Responsabilidades fixas
+    <button class="btn btn-sm" onclick="openAddResponsibilityModal()">+ Adicionar</button>
+  </div>
+  <div id="responsibilities-list" style="margin-top:12px;"></div>
 </div>
+```
+
+  </div>
+
+  <!-- FUNIL -->
+
+  <div id="page-funil" class="page">
+    <div class="page-header">
+      <div class="page-title">Funil de Captação</div>
+      <div class="page-sub">Da descoberta à fidelização — 5 estágios</div>
+    </div>
+
+```
+<div class="funnel-stage">
+  <div class="funnel-num" style="background:rgba(90,143,160,.15);color:#7ec4d8;">1</div>
+  <div class="funnel-body">
+    <h4>Descoberta — TikTok + SEO local</h4>
+    <p>Pessoa desconhecida encontra um vídeo ou o site via busca: "cerimônia de cura Caxias do Sul", "medicina ancestral RS". Nunca use "ayahuasca" em títulos de anúncios pagos.</p>
+    <div class="funnel-action">→ Link na bio do TikTok leva para WhatsApp ou grupo "Descobrindo Ayahuasca"</div>
+  </div>
+</div>
+<div class="funnel-arrow">↓</div>
+
+<div class="funnel-stage">
+  <div class="funnel-num" style="background:rgba(106,158,90,.15);color:var(--sage2);">2</div>
+  <div class="funnel-body">
+    <h4>Aquecimento — Grupo "Descobrindo Ayahuasca"</h4>
+    <p>Lead entra no grupo e recebe conteúdo de nutrição. Em até 48h, um fardado entra em contato individual — tira dúvidas, constrói vínculo. Sem vínculo, não há conversão.</p>
+    <div class="funnel-action">→ Conteúdo 3x/semana + contato individual obrigatório em 48h</div>
+  </div>
+</div>
+<div class="funnel-arrow">↓</div>
+
+<div class="funnel-stage">
+  <div class="funnel-num" style="background:rgba(196,176,110,.12);color:var(--gold2);">3</div>
+  <div class="funnel-body">
+    <h4>Conversão — Convite e inscrição</h4>
+    <p>Após nutrição, lead recebe convite direto para a sessão. Via grupo principal, disparo individual ou indicação. Formulário simples + confirmação humana (nunca bot).</p>
+    <div class="funnel-action">→ Não pressione. Quem tem vínculo converte naturalmente.</div>
+  </div>
+</div>
+<div class="funnel-arrow">↓</div>
+
+<div class="funnel-stage">
+  <div class="funnel-num" style="background:rgba(106,158,90,.15);color:var(--sage2);">4</div>
+  <div class="funnel-body">
+    <h4>Participação — Sessão</h4>
+    <p>Cerimônia acontece. A vivência do grupo e do vínculo com os fardados é o principal fator de retenção para as próximas sessões.</p>
+    <div class="funnel-action">→ Antes: enviar preparação. Depois: colher depoimentos (com consentimento)</div>
+  </div>
+</div>
+<div class="funnel-arrow">↓</div>
+
+<div class="funnel-stage">
+  <div class="funnel-num" style="background:rgba(138,106,180,.15);color:#b89ade;">5</div>
+  <div class="funnel-body">
+    <h4>Fidelização — Comunidade e integração pós-sessão</h4>
+    <p>Nas 72h após a sessão, a pessoa está mais aberta. Crie uma roda de integração (Zoom ou grupo especial). Mensagens personalizadas de follow-up. Quem se sente acompanhado volta.</p>
+    <div class="funnel-action">→ Vínculo pós-sessão é o que transforma participante em comunidade</div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<div class="card">
+  <div class="card-title">Programa de embaixadores</div>
+  <p style="font-size:13px;color:var(--text2);line-height:1.6;margin-top:8px;">
+    Cada participante tem um círculo de confiança que nenhum TikTok alcança. Crie um papel informal de embaixador: quem indicar alguém que efetivamente comparecer ganha algo simbólico — prioridade de vaga na próxima sessão, uma conversa individual com o facilitador, um material especial. Não precisa ser dinheiro. O reconhecimento já move.
+  </p>
+</div>
+```
+
+  </div>
+
+  <!-- IDEIAS -->
+
+  <div id="page-ideias" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Ideias de Refinamento</div>
+        <div class="page-sub">Estratégias para fortalecer a comunidade</div>
+      </div>
+      <button class="btn btn-primary" onclick="openAddIdeaModal()">+ Nova ideia</button>
+    </div>
+
+```
+<div id="ideas-container"></div>
+```
+
+  </div>
+
+  <!-- REUNIÃO -->
+
+  <div id="page-reuniao" class="page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Reuniões de Marketing</div>
+        <div class="page-sub">Arquivo de atas das reuniões realizadas</div>
+      </div>
+      <button class="btn btn-primary" onclick="openNewMeetingModal()">+ Nova reunião</button>
+    </div>
+
+```
+<div id="meetings-list"></div>
+```
+
+  </div>
+
+  <!-- LEMBRE-SE SEMPRE -->
+
+  <div id="page-lembrete" class="page">
+    <div class="page-header">
+      <div class="page-title">Lembre-se SEMPRE</div>
+      <div class="page-sub">Princípios inegociáveis da estratégia</div>
+    </div>
+
+```
+<div class="rule-card">
+  <div class="rule-title">Atendimento não é "quando der"</div>
+  <div class="rule-desc">Disparos e atendimento a leads são prioridade igual às demais obrigações de vida de cada fardado. A sessão precisa de esforço para acontecer, ou não vai rolar. Quem não atende perde o lead para sempre — esse lead nunca mais vai perguntar.</div>
+</div>
+
+<div class="rule-card sage">
+  <div class="rule-title">Vínculo é retenção</div>
+  <div class="rule-desc">Quem não tem vínculo não volta. A maior questão para manter as pessoas nas sessões não é o convite — é a relação construída antes e depois. Cada pessoa que entra no grupo "Descobrindo" deve receber contato individual em até 48h.</div>
+</div>
+
+<div class="rule-card earth">
+  <div class="rule-title">Linguagem nas redes — proteção contra ban</div>
+  <div class="rule-desc">Nunca use "ayahuasca" em títulos de anúncios pagos. Prefira: medicina ancestral, cura integrativa, expansão de consciência, cerimônia sagrada, espiritualidade. Conteúdo orgânico tem mais tolerância. Contas que ensinam e inspiram crescem mais do que contas que vendem.</div>
+</div>
+
+<div class="rule-card info">
+  <div class="rule-title">Leads frios — estratégia certa</div>
+  <div class="rule-desc">Não abandone os 230+ leads, mas não tente reconvertê-los com convite direto. Use essa base para pedir indicações de pessoas da nova cidade, ou para reativar com mensagem de reconhecimento e cuidado. Quem responde positivamente já é lead quente.</div>
+</div>
+
+<div class="rule-card" style="border-color:var(--sage);">
+  <div class="rule-title">Grupo "Descobrindo" não pode ser cemitério</div>
+  <div class="rule-desc">Grupo sem resposta humana vira cemitério de leads. Quem cuida disso precisa estar comprometido todos os dias. Conteúdo 3x/semana + contato individual = a diferença entre conversão e silêncio.</div>
+</div>
+
+<div class="rule-card" style="border-color:var(--gold);">
+  <div class="rule-title">Pós-sessão é o início, não o fim</div>
+  <div class="rule-desc">Nas 72h após a cerimônia, a pessoa está mais aberta do que nunca. Esse é o momento mais poderoso para construir fidelização. Não deixe a pessoa sozinha depois da experiência. Roda de integração, mensagens personalizadas, presença contínua.</div>
+</div>
+```
+
+  </div>
 
 </main>
 </div>
 
-<!-- DETAIL -->
-<div class="detail-screen" id="ev-detail">
-  <div class="detail-back" onclick="closeDetail()">← voltar</div>
-  <div id="ev-detail-content"></div>
-</div>
+<!-- Modal para tarefas do calendário -->
 
-<!-- MODAL EVENTO -->
-<div class="overlay" id="modal-ev">
+<div class="modal-overlay" id="modal-task">
   <div class="modal">
-    <div class="modal-title" id="mev-title">Novo evento</div>
-    <input type="hidden" id="mev-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Data</label><input class="form-input" type="date" id="mev-date"></div>
-      <div class="form-group"><label class="form-label">Tipo</label>
-        <select class="form-select" id="mev-type">
-          <option value="disp">Disparo</option><option value="cont">Conteúdo</option><option value="grup">Grupo</option><option value="mkt">Mkt/Funil</option><option value="sess">Sessão</option><option value="meet">Reunião</option>
+    <div class="modal-title" id="modal-day-title">Adicionar tarefa</div>
+    <div id="existing-tasks" style="margin-bottom:16px;"></div>
+    <div style="border-top:1px solid var(--border);padding-top:16px;margin-top:8px;">
+      <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:12px;">Nova tarefa</div>
+      <div class="form-group">
+        <label class="form-label">Tipo</label>
+        <select class="form-select" id="task-type">
+          <option value="disp">Disparo</option>
+          <option value="cont">Conteúdo</option>
+          <option value="grup">Grupo</option>
+          <option value="mkt">Mkt/Funil</option>
+          <option value="sess">Sessão</option>
+          <option value="meet">Reunião</option>
         </select>
       </div>
+      <div class="form-group">
+        <label class="form-label">Descrição</label>
+        <input class="form-input" id="task-text" placeholder="Descreva a tarefa...">
+      </div>
     </div>
-    <div class="form-group"><label class="form-label">Título</label><input class="form-input" id="mev-text" placeholder="Descreva o evento..."></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveTask()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar regra de ouro -->
+
+<div class="modal-overlay" id="modal-edit-rule">
+  <div class="modal">
+    <div class="modal-title">Editar Regra de Ouro</div>
     <div class="form-group">
-      <label class="form-label">Responsáveis</label>
-      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;" id="resp-chips"></div>
-      <div style="display:flex;gap:8px;"><input class="form-input" id="resp-inp" placeholder="Nome..." style="flex:1;" onkeydown="if(event.key==='Enter'){addResp();event.preventDefault();}"><button class="btn btn-sm" onclick="addResp()">+</button></div>
+      <label class="form-label">Texto da regra</label>
+      <textarea class="form-textarea" id="rule-text" placeholder="Digite a regra de ouro..."></textarea>
     </div>
-    <div class="form-group"><label class="form-label">Recorrência</label>
-      <select class="form-select" id="mev-recur" onchange="document.getElementById('recur-end-g').style.display=this.value!=='none'?'block':'none'">
-        <option value="none">Sem recorrência</option><option value="weekly">Semanal</option><option value="biweekly">Quinzenal</option><option value="monthly">Mensal</option>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeEditRuleModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditRule()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar notice -->
+
+<div class="modal-overlay" id="modal-edit-notice">
+  <div class="modal">
+    <div class="modal-title">Editar Próxima Ação</div>
+    <div class="form-group">
+      <label class="form-label">Texto da ação</label>
+      <textarea class="form-textarea" id="notice-text-input" placeholder="Descreva a próxima ação..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeEditNoticeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditNotice()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para editar ideias -->
+
+<div class="modal-overlay" id="modal-idea">
+  <div class="modal">
+    <div class="modal-title" id="idea-modal-title">Nova Ideia</div>
+    <div class="form-group">
+      <label class="form-label">Prazo</label>
+      <select class="form-select" id="idea-prazo">
+        <option value="curto">Curto prazo</option>
+        <option value="medio">Médio prazo</option>
+        <option value="longo">Longo prazo</option>
       </select>
     </div>
-    <div class="form-group" id="recur-end-g" style="display:none;"><label class="form-label">Repetir até</label><input class="form-input" type="date" id="mev-recur-end"></div>
-    <div class="form-group"><label class="form-label">Notas</label><textarea class="form-textarea" id="mev-notes" placeholder="Detalhes..."></textarea></div>
+    <div class="form-group">
+      <label class="form-label">Título</label>
+      <input class="form-input" id="idea-titulo" placeholder="Título da ideia...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descrição</label>
+      <textarea class="form-textarea" id="idea-desc" placeholder="Descreva a ideia..."></textarea>
+    </div>
     <div class="modal-actions">
-      <button class="btn btn-danger btn-sm" id="mev-del-btn" onclick="deleteEv()" style="margin-right:auto;display:none;">Excluir</button>
-      <button class="btn" onclick="closeEvModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveEv()">Salvar</button>
+      <button class="btn" onclick="closeIdeaModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveIdea()">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL TEMPLATE -->
-<div class="overlay" id="modal-tpl">
+<!-- Modal para editar responsabilidades -->
+
+<div class="modal-overlay" id="modal-responsibility">
   <div class="modal">
-    <div class="modal-title" id="mtpl-title">Novo modelo</div>
-    <input type="hidden" id="mtpl-id">
-    <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="mtpl-name" placeholder="Ex: Convite individual — WhatsApp"></div>
-    <div class="form-group"><label class="form-label">Texto</label><textarea class="form-textarea" id="mtpl-text" style="min-height:120px;" placeholder="Cole o texto aqui..."></textarea></div>
+    <div class="modal-title" id="resp-modal-title">Nova Responsabilidade</div>
+    <div class="form-group">
+      <label class="form-label">Quem</label>
+      <input class="form-input" id="resp-who" placeholder="Nome ou 'Todos'...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">O quê</label>
+      <textarea class="form-textarea" id="resp-what" placeholder="Descreva a responsabilidade..."></textarea>
+    </div>
     <div class="modal-actions">
-      <button class="btn btn-danger btn-sm" id="mtpl-del-btn" onclick="deleteTpl()" style="margin-right:auto;display:none;">Excluir</button>
-      <button class="btn" onclick="document.getElementById('modal-tpl').classList.remove('open')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveTpl()">Salvar</button>
+      <button class="btn" onclick="closeResponsibilityModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveResponsibility()">Salvar</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL PROCESSO -->
-<div class="overlay" id="modal-proc">
-  <div class="modal">
-    <div class="modal-title" id="mproc-title-label">Novo processo</div>
-    <input type="hidden" id="mproc-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Título</label><input class="form-input" id="mproc-title-inp" placeholder="Nome do processo"></div>
-      <div class="form-group"><label class="form-label">Categoria</label>
-        <select class="form-select" id="mproc-cat">
-          <option value="atend">Atendimento</option><option value="grupo">Grupo</option><option value="pos">Pós-sessão</option><option value="geral">Geral</option>
-        </select>
-      </div>
+<!-- Modal para reunião em tela cheia -->
+
+<div class="modal-overlay" id="modal-meeting">
+  <div class="modal" style="width:90%;max-width:800px;max-height:90vh;overflow-y:auto;">
+    <div class="modal-title" id="meeting-modal-title">Editar Reunião</div>
+    <div class="form-group">
+      <label class="form-label">Título</label>
+      <input class="form-input" id="meeting-title" placeholder="Título da reunião...">
     </div>
-    <div class="form-group"><label class="form-label">Descrição</label><textarea class="form-textarea" id="mproc-desc" style="min-height:110px;" placeholder="Passo a passo..."></textarea></div>
+    <div class="form-group">
+      <label class="form-label">Data</label>
+      <input class="form-input" id="meeting-date" type="date">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Conteúdo da Ata</label>
+      <textarea class="form-textarea" id="meeting-content" placeholder="Escreva o conteúdo completo da reunião..." style="min-height:300px;"></textarea>
+    </div>
     <div class="modal-actions">
-      <button class="btn btn-danger btn-sm" id="mproc-del-btn" onclick="deleteProc()" style="margin-right:auto;display:none;">Excluir</button>
-      <button class="btn" onclick="document.getElementById('modal-proc').classList.remove('open')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveProc()">Salvar</button>
+      <button class="btn" onclick="closeMeetingModal()">Cancelar</button>
+      <button class="btn btn-danger" id="delete-meeting-btn" style="margin-right:auto;" onclick="deleteMeetingFromModal()">Deletar</button>
+      <button class="btn btn-primary" onclick="saveMeeting()">Salvar</button>
     </div>
   </div>
 </div>
-
-<!-- MODAL REUNIÃO -->
-<div class="overlay" id="modal-meet">
-  <div class="modal">
-    <div class="modal-title" id="mmeet-title-label">Nova ata</div>
-    <input type="hidden" id="mmeet-id">
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Data</label><input class="form-input" type="date" id="mmeet-date"></div>
-      <div class="form-group"><label class="form-label">Título</label><input class="form-input" id="mmeet-title-inp" placeholder="Assunto da reunião"></div>
-    </div>
-    <div class="form-group"><label class="form-label">Ata / conteúdo</label><textarea class="form-textarea" id="mmeet-content" style="min-height:140px;" placeholder="Pautas, decisões, próximos passos..."></textarea></div>
-    <div class="modal-actions">
-      <button class="btn btn-danger btn-sm" id="mmeet-del-btn" onclick="deleteMeet()" style="margin-right:auto;display:none;">Excluir</button>
-      <button class="btn" onclick="document.getElementById('modal-meet').classList.remove('open')">Cancelar</button>
-      <button class="btn btn-primary" onclick="saveMeet()">Salvar</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL CONFIRMADOS -->
-<div class="overlay" id="modal-conf">
-  <div class="modal">
-    <div class="modal-title">Visitantes confirmados</div>
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <input class="form-input" id="conf-name" placeholder="Nome do visitante" style="flex:1;" onkeydown="if(event.key==='Enter')addConfirmado();">
-      <button class="btn btn-primary" onclick="addConfirmado()">Adicionar</button>
-    </div>
-    <div id="conf-list" style="max-height:260px;overflow-y:auto;"></div>
-    <div class="modal-actions"><button class="btn" onclick="document.getElementById('modal-conf').classList.remove('open')">Fechar</button></div>
-  </div>
-</div>
-
-<div class="toast" id="toast">✓ Salvo</div>
 
 <script>
-// ══════════════════════════════════════════════
-// FIREBASE INIT
-// ══════════════════════════════════════════════
-firebase.initializeApp({
-  apiKey: "AIzaSyBMWhpp3vABH8EByc2hHcKZ4VG9Yuq-TEc",
-  authDomain: "seda-app-15243.firebaseapp.com",
-  projectId: "seda-app-15243",
-  storageBucket: "seda-app-15243.firebasestorage.app",
-  messagingSenderId: "570197698769",
-  appId: "1:570197698769:web:0b07dc1e07081051c4bdf0"
-});
+// ---- AUTH ----
+const correctPassword = 'alto123';
 
-const auth = firebase.auth();
-const db   = firebase.firestore();
-
-const ALLOWED = [
-  "kiekowandre@gmail.com",
-  "karolframos56@gmail.com",
-  "paulofolle01@gmail.com",
-  "luis_taglian@hotmail.com",
-  "luiscarlosarmiliato1982@gmail.com",
-  "manueladeoliveiramto@gmail.com"
-];
-
-// ══════════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════════
-let events=[], templates=[], processes=[], meetings=[], regras=[], confirmados=[];
-let arts = [];
-try { arts = JSON.parse(localStorage.getItem('cer_arts') || '[]'); } catch {}
-
-// ══════════════════════════════════════════════
-// AUTH
-// ══════════════════════════════════════════════
-function loginGoogle() {
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-    .then(r => {
-      if (!ALLOWED.includes(r.user.email)) {
-        auth.signOut();
-        showAuthErr('Acesso negado. Conta não autorizada: ' + r.user.email);
-      }
-    })
-    .catch(e => { if (e.code !== 'auth/popup-closed-by-user') showAuthErr(e.message); });
-}
-
-function doSignOut() { auth.signOut(); }
-
-function showAuthErr(msg) {
-  const el = document.getElementById('auth-error');
-  el.textContent = msg; el.style.display = 'block';
-}
-
-auth.onAuthStateChanged(user => {
-  if (user && ALLOWED.includes(user.email)) {
-    document.getElementById('auth-screen').classList.add('hidden');
-    document.getElementById('app').classList.add('visible');
-    document.getElementById('sb-uname').textContent = user.displayName || user.email;
-    document.getElementById('sb-uemail').textContent = user.email;
-    if (user.photoURL) {
-      const img = document.getElementById('sb-avatar-img');
-      img.src = user.photoURL; img.style.display = 'block';
-      document.getElementById('sb-avatar-init').style.display = 'none';
-    } else {
-      document.getElementById('sb-avatar-init').textContent = (user.displayName||user.email)[0].toUpperCase();
-    }
-    startListeners();
-    loadSettings();
-    renderArts();
-    renderCalendar();
+function checkPassword() {
+  const input = document.getElementById('password-input');
+  const error = document.getElementById('login-error');
+  const password = input.value.trim();
+  
+  if (password === correctPassword) {
+    sessionStorage.setItem('auth', 'true');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    input.value = '';
+    error.classList.remove('show');
   } else {
-    document.getElementById('auth-screen').classList.remove('hidden');
-    document.getElementById('app').classList.remove('visible');
+    error.classList.add('show');
+    input.value = '';
+  }
+}
+
+// Verificar autenticação ao carregar
+window.addEventListener('DOMContentLoaded', function() {
+  if (!sessionStorage.getItem('auth')) {
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('password-input').focus();
+  } else {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+  }
+  
+  // Resto das inicializações...
+  const customRule = localStorage.getItem('custom_rule');
+  if (customRule) {
+    document.getElementById('rule-text-display').textContent = customRule;
+  }
+  const customNotice = localStorage.getItem('custom_notice');
+  if (customNotice) {
+    document.getElementById('notice-text').textContent = customNotice;
+  }
+  if (document.getElementById('ideas-container')) {
+    renderIdeas();
+  }
+  if (document.getElementById('responsibilities-list')) {
+    renderResponsibilities();
+  }
+  if (document.getElementById('meetings-list')) {
+    renderMeetings();
   }
 });
 
-// ══════════════════════════════════════════════
-// FIRESTORE HELPERS
-// ══════════════════════════════════════════════
-function fsSave(col, id, data) {
-  // Use set() sem merge para garantir que o documento é completamente substituído
-  return db.collection(col).doc(String(id)).set(data)
-    .then(() => showToast('✓ Salvo'))
-    .catch(e => { console.error('Erro ao salvar', col, id, e); showToast('Erro: ' + e.message); });
-}
-
-function fsDel(col, id) {
-  return db.collection(col).doc(String(id)).delete()
-    .then(() => showToast('✓ Excluído'))
-    .catch(e => console.error('Erro ao excluir', e));
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._tid);
-  t._tid = setTimeout(() => t.classList.remove('show'), 2200);
-}
-
-// ══════════════════════════════════════════════
-// LISTENERS EM TEMPO REAL
-// ══════════════════════════════════════════════
-function startListeners() {
-  db.collection('events').onSnapshot(snap => {
-    events = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-    renderCalendar();
-    renderDashboard();
-    if (document.getElementById('list-view').style.display === 'block') renderList();
-  }, e => console.error('events listener', e));
-
-  db.collection('templates').onSnapshot(snap => {
-    templates = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-    if (document.getElementById('page-convites').classList.contains('active')) renderTemplates();
-  }, e => console.error('templates listener', e));
-
-  db.collection('processes').onSnapshot(snap => {
-    processes = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-    if (document.getElementById('page-processo').classList.contains('active')) renderProcesses();
-  }, e => console.error('processes listener', e));
-
-  db.collection('meetings').onSnapshot(snap => {
-    meetings = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-    if (document.getElementById('page-reunioes').classList.contains('active')) renderMeetings();
-  }, e => console.error('meetings listener', e));
-
-  db.collection('regras').onSnapshot(snap => {
-    regras = snap.docs.map(d => ({ ...d.data(), id: d.id })).sort((a,b) => (a._ord||0)-(b._ord||0));
-    if (document.getElementById('page-regras').classList.contains('active')) renderRegras();
-  }, e => console.error('regras listener', e));
-
-  db.collection('confirmados').onSnapshot(snap => {
-    confirmados = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-    document.getElementById('st-conf').textContent = confirmados.length;
-    if (document.getElementById('modal-conf').classList.contains('open')) renderConfirmados();
-  }, e => console.error('confirmados listener', e));
-}
-
-// ══════════════════════════════════════════════
-// SETTINGS
-// ══════════════════════════════════════════════
-function loadSettings() {
-  db.collection('settings').doc('main').get().then(doc => {
-    const d = doc.exists ? doc.data() : {};
-    document.getElementById('sess-picker').value = d.sess_date || '';
-    const qel = document.getElementById('quote-edit');
-    qel.value = d.quote || '';
-    setTimeout(() => autoResize(qel), 0);
-    renderDashboard();
-  }).catch(e => console.error('loadSettings', e));
-}
-
-function saveSessDate(val) {
-  db.collection('settings').doc('main').set({ sess_date: val }, { merge: true })
-    .then(() => { showToast('✓ Data salva'); renderDashboard(); })
-    .catch(e => console.error(e));
-}
-
-function saveQuote() {
-  const val = document.getElementById('quote-edit').value;
-  db.collection('settings').doc('main').set({ quote: val }, { merge: true })
-    .then(() => showToast('✓ Frase salva'))
-    .catch(e => console.error(e));
-}
-
-function autoResize(el) { el.style.height='auto'; el.style.height=el.scrollHeight+'px'; }
-function getSessDate() { return document.getElementById('sess-picker').value || ''; }
-
-// ══════════════════════════════════════════════
-// NAV
-// ══════════════════════════════════════════════
-const PAGES = [
-  {id:'dashboard',icon:'🏠',label:'Dashboard'},
-  {id:'convites', icon:'✉️', label:'Convites'},
-  {id:'calendario',icon:'📅',label:'Calendário'},
-  {id:'processo', icon:'⚙️', label:'Processo'},
-  {id:'reunioes', icon:'📋',label:'Reuniões'},
-  {id:'regras',   icon:'📌',label:'Regras'},
-];
-
-document.getElementById('sb-nav').innerHTML = PAGES.map(p =>
-  `<button class="nav-item" id="nav-${p.id}" onclick="goTo('${p.id}')"><span class="nav-icon">${p.icon}</span><span>${p.label}</span></button>`
-).join('');
-document.getElementById('nav-dashboard').classList.add('active');
-
+// ---- NAV ----
 function goTo(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.getElementById('nav-'+id).classList.add('active');
-  const map = { calendario:renderCalendar, dashboard:renderDashboard, processo:renderProcesses, reunioes:renderMeetings, regras:renderRegras, convites:renderTemplates };
-  if (map[id]) map[id]();
-}
-
-// ══════════════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════════════
-function renderDashboard() {
-  const sd = getSessDate();
-  if (!sd) {
-    document.getElementById('db-sess-label').textContent = 'não definida';
-    document.getElementById('db-countdown').textContent = '';
-    document.getElementById('st-days').textContent = '—';
-    document.getElementById('st-weeks').textContent = '—';
-    document.getElementById('st-days-lbl').textContent = 'Defina a data acima';
-  } else {
-    const target = new Date(sd+'T00:00:00');
-    const now = new Date(); now.setHours(0,0,0,0);
-    const diff = Math.max(0, Math.ceil((target-now)/86400000));
-    const fmt = target.toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'});
-    document.getElementById('db-sess-label').textContent = fmt;
-    document.getElementById('db-countdown').textContent = diff > 0 ? diff+' dias restantes' : 'Sessão hoje!';
-    document.getElementById('st-days').textContent = diff;
-    document.getElementById('st-weeks').textContent = Math.ceil(diff/7);
-    document.getElementById('st-days-lbl').textContent = fmt;
-  }
-  document.getElementById('st-conf').textContent = confirmados.length;
-  const today = new Date(); today.setHours(0,0,0,0);
-  const up = events.filter(e => new Date(e.date+'T00:00:00') >= today).sort((a,b) => a.date.localeCompare(b.date)).slice(0,8);
-  document.getElementById('upcoming-tasks').innerHTML = up.length
-    ? up.map(e => {
-        const dl = new Date(e.date+'T00:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-        return `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);align-items:start;font-size:13px;">
-          <span class="badge b-${e.type}" style="flex-shrink:0;">${dl}</span>
-          <span style="color:var(--text2);">${e.resp&&e.resp.length?'<span style="color:var(--text3)">'+e.resp[0]+'</span> · ':''}${e.text}</span>
-        </div>`;
-      }).join('')
-    : '<div style="color:var(--text3);font-size:13px;padding:8px 0;">Nenhuma tarefa futura.</div>';
-}
-
-// ══════════════════════════════════════════════
-// CONFIRMADOS
-// ══════════════════════════════════════════════
-function openConfirmados() { renderConfirmados(); document.getElementById('modal-conf').classList.add('open'); }
-
-function addConfirmado() {
-  const n = document.getElementById('conf-name').value.trim(); if (!n) return;
-  const id = 'c' + Date.now();
-  fsSave('confirmados', id, {id, name: n});
-  document.getElementById('conf-name').value = '';
-}
-
-function removeConfirmado(id) { fsDel('confirmados', id); }
-
-function renderConfirmados() {
-  document.getElementById('conf-list').innerHTML = confirmados.length
-    ? confirmados.map(c => `<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);">
-        <span style="font-size:13px;">${c.name}</span>
-        <button class="btn btn-sm btn-danger" onclick="removeConfirmado('${c.id}')">×</button>
-      </div>`).join('')
-    : '<div style="color:var(--text3);font-size:13px;padding:12px 0;text-align:center;">Nenhum confirmado ainda.</div>';
-}
-
-// ══════════════════════════════════════════════
-// CALENDAR
-// ══════════════════════════════════════════════
-let calY = new Date().getFullYear(), calM = new Date().getMonth();
-const MNAMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-const TL = {disp:'Disparo',cont:'Conteúdo',grup:'Grupo',mkt:'Mkt',sess:'Sessão',meet:'Reunião'};
-const RECURL = {none:'—',weekly:'Semanal',biweekly:'Quinzenal',monthly:'Mensal'};
-
-function getEvDay(y,m,d) {
-  const dk = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  return events.filter(e => {
-    if (e.date === dk) return true;
-    if (!e.recur || e.recur === 'none') return false;
-    const start = new Date(e.date+'T00:00:00'), tgt = new Date(dk+'T00:00:00');
-    if (tgt <= start) return false;
-    if (e.recurEnd && tgt > new Date(e.recurEnd+'T00:00:00')) return false;
-    const dd = Math.round((tgt-start)/86400000);
-    if (e.recur==='weekly') return dd%7===0;
-    if (e.recur==='biweekly') return dd%14===0;
-    if (e.recur==='monthly') return tgt.getDate()===start.getDate();
-    return false;
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) n.classList.add('active');
   });
+  if (id === 'calendario') renderCalendar();
 }
 
-function prevMonth() { calM--; if(calM<0){calM=11;calY--;} renderCalendar(); }
-function nextMonth() { calM++; if(calM>11){calM=0;calY++;} renderCalendar(); }
+// ---- COUNTDOWN ----
+function updateCountdown() {
+  const target = new Date('2026-04-26');
+  const now = new Date();
+  const diff = Math.ceil((target - now) / (1000*60*60*24));
+  const weeks = Math.ceil(diff / 7);
+  document.getElementById('stat-days').textContent = diff > 0 ? diff : 0;
+  document.getElementById('stat-weeks').textContent = diff > 0 ? weeks : 0;
+  document.getElementById('countdown-text').textContent = diff > 0 ? diff + ' dias restantes' : 'Sessão hoje!';
+}
+updateCountdown();
+
+// ---- CALENDAR ----
+let calYear = 2026, calMonth = 2; // 0-indexed, March=2
+
+const defaultTasks = {
+  '2026-3-24': [
+    {type:'meet', text:'Reunião de marketing · alinhamento + ferramenta'},
+    {type:'disp', text:'Disparos individuais — todos os fardados'}
+  ],
+  '2026-3-25': [{type:'cont', text:'Gravar vídeo depoimento (cada fardado)'}],
+  '2026-3-27': [{type:'cont', text:'TikTok #1: Apresentação (hook forte, sem nomear)'}],
+  '2026-3-28': [
+    {type:'grup', text:'Post pedindo indicações no grupo principal'},
+    {type:'cont', text:'TikTok #2: Depoimento Fardado #1'},
+    {type:'mkt',  text:'Criar conta TikTok + linha editorial'}
+  ],
+  '2026-3-30': [
+    {type:'grup', text:'Convite no grupo — André'},
+    {type:'mkt',  text:'Briefing landing page / site SEO'}
+  ],
+  '2026-4-1': [
+    {type:'disp', text:'Novo lote de disparos individuais'},
+    {type:'cont', text:'TikTok #3: Desmistificação — O que a ciência diz'}
+  ],
+  '2026-4-2':  [
+    {type:'grup', text:'Convite no grupo — Karol'},
+    {type:'mkt',  text:'Lançar grupo Descobrindo Ayahuasca'}
+  ],
+  '2026-4-4':  [
+    {type:'cont', text:'TikTok #4: Reflexão Espiritual'},
+    {type:'disp', text:'Follow-up em quem não respondeu (sem 1)'}
+  ],
+  '2026-4-6':  [
+    {type:'grup', text:'Convite no grupo — Manuela'},
+    {type:'disp', text:'Novo lote de disparos'}
+  ],
+  '2026-4-8':  [
+    {type:'cont', text:'TikTok #5: O que esperar da primeira vez'}
+  ],
+  '2026-4-9':  [
+    {type:'grup', text:'Convite no grupo — Volmar'},
+    {type:'mkt',  text:'Revisão do funil: leads no grupo Descobrindo?'}
+  ],
+  '2026-4-11': [
+    {type:'cont', text:'TikTok #6: Depoimento Fardado #2 — O cético'},
+    {type:'disp', text:'Convite oficial para sessão de abril (26 e 27)'}
+  ],
+  '2026-4-13': [
+    {type:'grup', text:'Convite no grupo — Luis Armiliato'},
+    {type:'cont', text:'TikTok #7: Cura emocional'}
+  ],
+  '2026-4-16': [
+    {type:'disp', text:'Lembrete individual para confirmação de presença'},
+    {type:'cont', text:'TikTok #8: Convite velado (pré-sessão)'}
+  ],
+  '2026-4-18': [
+    {type:'grup', text:'Convite no grupo — André'},
+    {type:'mkt',  text:'Revisão: inscrições confirmadas para abril'}
+  ],
+  '2026-4-20': [
+    {type:'disp', text:'Último lote de confirmações'},
+    {type:'cont', text:'Post de preparação'}
+  ],
+  '2026-4-22': [
+    {type:'grup', text:'Convite no grupo — Karol'},
+    {type:'disp', text:'Mensagem de acolhimento e lembrete final'}
+  ],
+  '2026-4-26': [{type:'sess', text:'🌿 SESSÃO — Dia 1'}],
+  '2026-4-27': [
+    {type:'sess', text:'🌿 SESSÃO — Dia 2'},
+    {type:'cont', text:'Coletar depoimentos novos (com consentimento)'}
+  ],
+};
+
+let customTasks = JSON.parse(localStorage.getItem('cal_tasks') || '{}');
+let editingDay = null;
+
+function getKey(y, m, d) { return y + '-' + (m+1) + '-' + d; }
+
+function getTasks(y, m, d) {
+  const k = getKey(y, m, d);
+  const def = defaultTasks[k] || [];
+  const cust = customTasks[k] || [];
+  return [...def, ...cust];
+}
 
 function renderCalendar() {
-  document.getElementById('cal-title').textContent = MNAMES[calM] + ' ' + calY;
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('cal-title').textContent = months[calMonth] + ' ' + calYear;
   const grid = document.getElementById('cal-grid');
   grid.innerHTML = '';
-  ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'].forEach(d => {
-    const h = document.createElement('div'); h.className='cal-hdr'; h.textContent=d; grid.appendChild(h);
-  });
-  const first = new Date(calY,calM,1).getDay();
-  const total = new Date(calY,calM+1,0).getDate();
-  const now = new Date();
-  const sd = getSessDate();
-  for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cal-day empty';grid.appendChild(e);}
-  for(let d=1;d<=total;d++){
-    const dk = `${calY}-${String(calM+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+  const days = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  days.forEach(d => { const h = document.createElement('div'); h.className = 'cal-day-header'; h.textContent = d; grid.appendChild(h); });
+
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const total = new Date(calYear, calMonth+1, 0).getDate();
+  const today = new Date();
+
+  for (let i = 0; i < first; i++) { const e = document.createElement('div'); e.className = 'cal-day empty'; grid.appendChild(e); }
+
+  for (let d = 1; d <= total; d++) {
     const cell = document.createElement('div');
-    cell.className = 'cal-day' +
-      (d===now.getDate()&&calM===now.getMonth()&&calY===now.getFullYear()?' today':'') +
-      (dk===sd?' sess-day':'');
-    const dn = document.createElement('div'); dn.className='cal-day-num'; dn.textContent=d; cell.appendChild(dn);
-    const dayEvs = getEvDay(calY,calM,d);
-    dayEvs.slice(0,3).forEach(ev => {
-      const t = document.createElement('div');
-      t.className = 'cal-task ct-'+ev.type;
-      t.textContent = (ev.resp&&ev.resp.length?ev.resp[0]+' · ':'')+ev.text;
-      t.onclick = e => { e.stopPropagation(); openDetail(ev); };
-      cell.appendChild(t);
+    const isToday = d === today.getDate() && calMonth === today.getMonth() && calYear === today.getFullYear();
+    const isSess = (calMonth === 3 && (d === 26 || d === 27));
+    cell.className = 'cal-day' + (isToday ? ' today' : '') + (isSess ? ' session-day' : '');
+    cell.innerHTML = '<div class="cal-day-num">' + d + '</div>';
+    const tasks = getTasks(calYear, calMonth, d);
+    tasks.slice(0,3).forEach(t => {
+      const el = document.createElement('div');
+      el.className = 'cal-task ct-' + t.type;
+      el.textContent = t.text;
+      cell.appendChild(el);
     });
-    if (dayEvs.length>3) {
-      const more = document.createElement('div'); more.className='cal-task ct-meet';
-      more.textContent='+'+(dayEvs.length-3)+' mais'; more.onclick=e=>e.stopPropagation();
+    if (tasks.length > 3) {
+      const more = document.createElement('div');
+      more.className = 'cal-task ct-meet';
+      more.textContent = '+' + (tasks.length-3) + ' mais';
       cell.appendChild(more);
     }
-    const add = document.createElement('div'); add.className='cal-add'; add.innerHTML='＋';
-    add.onclick = e => { e.stopPropagation(); openEvModal(null, dk); };
-    cell.appendChild(add);
-    cell.onclick = () => openEvModal(null, dk);
+    cell.onclick = () => openDayModal(d);
     grid.appendChild(cell);
   }
 }
 
-function switchCalTab(tab, btn) {
-  document.querySelectorAll('.cal-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
-  document.getElementById('cal-view').style.display = tab==='cal'?'block':'none';
-  document.getElementById('list-view').style.display = tab==='list'?'block':'none';
-  if (tab==='list') renderList();
+function prevMonth() {
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+}
+function nextMonth() {
+  calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
 }
 
-// ══════════════════════════════════════════════
-// LIST VIEW
-// ══════════════════════════════════════════════
-function escH(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-function renderList() {
-  const search = (document.getElementById('list-search').value||'').toLowerCase();
-  const tf = document.getElementById('list-ftype').value;
-  let evs = [...events].sort((a,b)=>a.date.localeCompare(b.date));
-  if (tf) evs = evs.filter(e=>e.type===tf);
-  if (search) evs = evs.filter(e=>
-    (e.text||'').toLowerCase().includes(search)||
-    (e.resp||[]).join(' ').toLowerCase().includes(search)||
-    (e.notes||'').toLowerCase().includes(search)
-  );
-  document.getElementById('ev-tbody').innerHTML = evs.length
-    ? evs.map(ev=>`<tr>
-        <td><input type="date" class="ev-cell-edit" value="${escH(ev.date)}" style="padding:8px;font-size:12px;" onchange="inlineEv('${ev.id}','date',this.value)"></td>
-        <td><select class="ev-cell-sel" onchange="inlineEv('${ev.id}','type',this.value)">
-          ${['disp','cont','grup','mkt','sess','meet'].map(t=>`<option value="${t}"${ev.type===t?' selected':''}>${TL[t]}</option>`).join('')}
-        </select></td>
-        <td><input class="ev-cell-edit" value="${escH(ev.text)}" onchange="inlineEv('${ev.id}','text',this.value)"></td>
-        <td><input class="ev-cell-edit" value="${escH((ev.resp||[]).join(', '))}" style="font-size:12px;" onchange="inlineEvResp('${ev.id}',this.value)"></td>
-        <td><select class="ev-cell-sel" style="font-size:12px;" onchange="inlineEv('${ev.id}','recur',this.value)">
-          ${['none','weekly','biweekly','monthly'].map(r=>`<option value="${r}"${(ev.recur||'none')===r?' selected':''}>${RECURL[r]}</option>`).join('')}
-        </select></td>
-        <td><input class="ev-cell-edit" value="${escH(ev.notes||'')}" style="font-size:12px;" onchange="inlineEv('${ev.id}','notes',this.value)"></td>
-        <td class="ev-actions-cell">
-          <button class="btn btn-sm" onclick="dupEv('${ev.id}')" title="Duplicar" style="margin-right:3px;padding:4px 8px;">⎘</button>
-          <button class="btn btn-sm btn-danger" onclick="delEvById('${ev.id}')">×</button>
-        </td>
-      </tr>`).join('')
-    : `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--text3);">Nenhum evento.</td></tr>`;
+function openDayModal(d) {
+  editingDay = getKey(calYear, calMonth, d);
+  const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  document.getElementById('modal-day-title').textContent = d + ' de ' + months[calMonth];
+  const tasks = getTasks(calYear, calMonth, d);
+  const container = document.getElementById('existing-tasks');
+  if (tasks.length > 0) {
+    container.innerHTML = '<div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:10px;">Tarefas do dia</div>';
+    tasks.forEach((t, i) => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);';
+      const badge = document.createElement('span');
+      badge.className = 'badge b-' + t.type;
+      badge.textContent = {disp:'Disparo',cont:'Conteúdo',grup:'Grupo',mkt:'Mkt',sess:'Sessão',meet:'Reunião'}[t.type];
+      const txt = document.createElement('span');
+      txt.style.cssText = 'font-size:13px;color:var(--text2);flex:1;';
+      txt.textContent = t.text;
+      row.appendChild(badge); row.appendChild(txt);
+      const def = defaultTasks[editingDay] || [];
+      if (i >= def.length) {
+        const del = document.createElement('button');
+        del.className = 'btn btn-sm btn-danger';
+        del.textContent = '×';
+        del.onclick = () => deleteCustomTask(i - def.length);
+        row.appendChild(del);
+      }
+      container.appendChild(row);
+    });
+  } else {
+    container.innerHTML = '<div style="font-size:13px;color:var(--text3);padding:8px 0;">Nenhuma tarefa ainda.</div>';
+  }
+  document.getElementById('modal-task').classList.add('open');
 }
 
-function inlineEv(id, field, val) {
-  const ev = events.find(e=>e.id===id); if(!ev) return;
-  fsSave('events', id, {...ev, [field]: val});
+function deleteCustomTask(idx) {
+  if (!customTasks[editingDay]) return;
+  customTasks[editingDay].splice(idx, 1);
+  if (customTasks[editingDay].length === 0) delete customTasks[editingDay];
+  localStorage.setItem('cal_tasks', JSON.stringify(customTasks));
+  closeModal();
+  renderCalendar();
 }
 
-function inlineEvResp(id, val) {
-  const ev = events.find(e=>e.id===id); if(!ev) return;
-  fsSave('events', id, {...ev, resp: val.split(',').map(s=>s.trim()).filter(Boolean)});
+function saveTask() {
+  const type = document.getElementById('task-type').value;
+  const text = document.getElementById('task-text').value.trim();
+  if (!text) return;
+  if (!customTasks[editingDay]) customTasks[editingDay] = [];
+  customTasks[editingDay].push({type, text});
+  localStorage.setItem('cal_tasks', JSON.stringify(customTasks));
+  document.getElementById('task-text').value = '';
+  closeModal();
+  renderCalendar();
 }
 
-function dupEv(id) {
-  const ev = events.find(e=>e.id===id); if(!ev) return;
-  const nid = 'e'+Date.now();
-  fsSave('events', nid, {...ev, id: nid});
+function closeModal() { document.getElementById('modal-task').classList.remove('open'); }
+
+// ---- EDIÇÃO DE REGRA ----
+function openEditRuleModal() {
+  const current = document.getElementById('rule-text-display').textContent.trim();
+  document.getElementById('rule-text').value = current;
+  document.getElementById('modal-edit-rule').classList.add('open');
 }
 
-function delEvById(id) {
-  if (!confirm('Excluir este evento?')) return;
-  fsDel('events', id);
+function closeEditRuleModal() { 
+  document.getElementById('modal-edit-rule').classList.remove('open'); 
 }
 
-// ══════════════════════════════════════════════
-// EVENT MODAL
-// ══════════════════════════════════════════════
-let curResps = [];
-
-function addResp() {
-  const v = document.getElementById('resp-inp').value.trim();
-  if (!v || curResps.includes(v)) return;
-  curResps.push(v); document.getElementById('resp-inp').value=''; renderResps();
-}
-function removeResp(n) { curResps = curResps.filter(r=>r!==n); renderResps(); }
-function renderResps() {
-  document.getElementById('resp-chips').innerHTML = curResps.map(r=>
-    `<span class="chip">${r} <span onclick="removeResp('${r}')" style="cursor:pointer;opacity:.6;">×</span></span>`).join('');
+function saveEditRule() {
+  const newText = document.getElementById('rule-text').value.trim();
+  if (!newText) return;
+  localStorage.setItem('custom_rule', newText);
+  document.getElementById('rule-text-display').textContent = newText;
+  closeEditRuleModal();
 }
 
-function openEvModal(ev, defDate) {
-  document.getElementById('mev-id').value = ev ? ev.id : '';
-  document.getElementById('mev-title').textContent = ev ? 'Editar evento' : 'Novo evento';
-  document.getElementById('mev-date').value = ev ? ev.date : (defDate||'');
-  document.getElementById('mev-type').value = ev ? ev.type : 'disp';
-  document.getElementById('mev-text').value = ev ? ev.text : '';
-  document.getElementById('mev-notes').value = ev ? (ev.notes||'') : '';
-  document.getElementById('mev-recur').value = ev ? (ev.recur||'none') : 'none';
-  document.getElementById('mev-recur-end').value = ev ? (ev.recurEnd||'') : '';
-  document.getElementById('recur-end-g').style.display = (ev&&ev.recur&&ev.recur!=='none') ? 'block' : 'none';
-  document.getElementById('mev-del-btn').style.display = ev ? 'inline-block' : 'none';
-  curResps = ev&&ev.resp ? [...ev.resp] : [];
-  renderResps();
-  document.getElementById('modal-ev').classList.add('open');
+// ---- EDIÇÃO DE NOTICE ----
+function openEditNoticeModal() {
+  const current = document.getElementById('notice-text').textContent.trim();
+  document.getElementById('notice-text-input').value = current;
+  document.getElementById('modal-edit-notice').classList.add('open');
 }
 
-function saveEv() {
-  const id = document.getElementById('mev-id').value || 'e'+Date.now();
-  const date = document.getElementById('mev-date').value;
-  const text = document.getElementById('mev-text').value.trim();
-  if (!date || !text) { alert('Preencha data e título.'); return; }
-  const ev = {
-    id, date, text,
-    type: document.getElementById('mev-type').value,
-    resp: [...curResps],
-    notes: document.getElementById('mev-notes').value.trim(),
-    recur: document.getElementById('mev-recur').value,
-    recurEnd: document.getElementById('mev-recur-end').value || null
-  };
-  fsSave('events', id, ev);
-  closeEvModal();
+function closeEditNoticeModal() { 
+  document.getElementById('modal-edit-notice').classList.remove('open'); 
 }
 
-function deleteEv() {
-  const id = document.getElementById('mev-id').value; if(!id) return;
-  if (!confirm('Excluir este evento?')) return;
-  fsDel('events', id);
-  closeEvModal();
+function saveEditNotice() {
+  const newText = document.getElementById('notice-text-input').value.trim();
+  if (!newText) return;
+  localStorage.setItem('custom_notice', newText);
+  document.getElementById('notice-text').textContent = newText;
+  closeEditNoticeModal();
 }
 
-function closeEvModal() { document.getElementById('modal-ev').classList.remove('open'); }
-
-function openDetail(ev) {
-  document.getElementById('ev-detail').classList.add('open');
-  const d = new Date(ev.date+'T00:00:00');
-  document.getElementById('ev-detail-content').innerHTML = `
-    <span class="badge b-${ev.type}" style="margin-bottom:16px;display:inline-block;">${TL[ev.type]||ev.type}</span>
-    <h1 style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;margin-bottom:8px;">${ev.text}</h1>
-    <div style="font-size:14px;color:var(--text3);margin-bottom:24px;">${d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
-    ${ev.resp&&ev.resp.length?`<div style="margin-bottom:20px;"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:8px;">Responsáveis</div>${ev.resp.map(r=>`<span class="chip">${r}</span>`).join('')}</div>`:''}
-    ${ev.notes?`<div style="margin-bottom:24px;"><div style="font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px;">Notas</div><div style="font-size:14px;color:var(--text2);line-height:1.7;white-space:pre-wrap;">${ev.notes}</div></div>`:''}
-    <div style="display:flex;gap:10px;margin-top:24px;">
-      <button class="btn btn-primary" onclick="editFromDetail('${ev.id}')">Editar</button>
-      <button class="btn btn-danger" onclick="delFromDetail('${ev.id}')">Excluir</button>
-    </div>`;
+// ---- REUNIÕES (ATAS) ----
+let meetings = JSON.parse(localStorage.getItem('meetings') || '[]');
+if (meetings.length === 0) {
+  meetings = [
+    {
+      id: Date.now(),
+      title: 'Reunião de Marketing - Alinhamento Geral',
+      date: '2026-03-24',
+      content: 'ABERTURA (0–5\')\nContextualizar: as sessões de abril dependem de esforço coletivo agora. Não existe "vai acontecer naturalmente". Cada fardado é parte ativa da construção.\n\nALINHAMENTO — ATENDIMENTO É PRIORIDADE (5–15\')\nDisparos e respostas a leads não são "quando der". São compromisso igual a qualquer outro. Abrir para dúvidas e resistências — melhor resolver aqui do que no silêncio.\nPonto-chave: quem não atende perde o lead para sempre. Esse lead nunca mais vai perguntar.\n\nPRÁTICO — MANUELA ENSINA A FERRAMENTA DE AGENDAMENTO (15–30\')\nDemonstração ao vivo: como agendar mensagens de bom dia, reflexão e follow-up para a semana inteira. Cada fardado sai da reunião com pelo menos a primeira semana agendada.\nObjetivo: ninguém mais depende de lembrar de postar. Está pronto, automático.\n\nESTRATÉGIA — APRESENTAÇÃO DO PLANO DOS 2 MESES (30–40\')\nMostrar o cronograma: quem faz convite em qual dia, quando são os disparos, como funciona o funil. Cada pessoa sabe exatamente o que fazer e quando.\nDistribuir o cronograma de revezamento de convites no grupo.\n\nPRÁTICO — VÍDEOS DEPOIMENTO (40–50\')\nCombinar como e quando cada fardado vai gravar. Definir prazo hoje. Alguém fica responsável por receber e publicar.\nDica: vídeo vertical, 60–90 segundos, espontâneo. Não precisa ser produção profissional.\n\nALINHAMENTO — GRUPO "DESCOBRINDO AYAHUASCA" (50–60\')\nDefinir: quem monitora o grupo? Quem faz contato individual? Regra: contato humano em até 48h após entrada. Construir vínculo antes de convidar para a sessão.\n\nENCERRAMENTO + COMPROMETIMENTOS (60–75\')\nCada pessoa fala em voz alta: "Meu compromisso até sexta é ______." Sair com ações concretas, não intenções vagas. Marcar próxima reunião: 7 de abril.'
+    }
+  ];
 }
+let editingMeetingId = null;
 
-function closeDetail() { document.getElementById('ev-detail').classList.remove('open'); }
-function editFromDetail(id) { closeDetail(); const ev=events.find(e=>e.id===id); if(ev) openEvModal(ev,null); }
-function delFromDetail(id) { if(!confirm('Excluir?'))return; fsDel('events',id); closeDetail(); }
-
-// ══════════════════════════════════════════════
-// TEMPLATES
-// ══════════════════════════════════════════════
-function switchConvTab(tab) {
-  document.getElementById('tab-textos').classList.toggle('active', tab==='textos');
-  document.getElementById('tab-artes').classList.toggle('active', tab==='artes');
-  document.getElementById('conv-textos').style.display = tab==='textos'?'block':'none';
-  document.getElementById('conv-artes').style.display = tab==='artes'?'block':'none';
-  document.getElementById('btn-add-conv').style.display = tab==='textos'?'inline-block':'none';
-}
-
-function renderTemplates() {
-  document.getElementById('templates-list').innerHTML = templates.length
-    ? templates.map(t=>`
-        <div class="invite-card">
-          <div style="font-weight:500;font-size:14px;margin-bottom:6px;">${t.name}</div>
-          <div style="font-size:13px;color:var(--text2);line-height:1.7;white-space:pre-wrap;">${t.text}</div>
-          <div style="position:absolute;top:16px;right:16px;display:flex;gap:6px;">
-            <button class="btn btn-sm" onclick="copyTpl('${t.id}')">Copiar</button>
-            <button class="btn btn-sm" onclick="openEditTpl('${t.id}')">Editar</button>
-          </div>
-        </div>`).join('')
-    : '<div style="color:var(--text3);font-size:13px;">Nenhum modelo cadastrado.</div>';
-}
-
-function copyTpl(id) {
-  const t = templates.find(t=>t.id===id); if(!t) return;
-  navigator.clipboard.writeText(t.text).then(()=>showToast('✓ Copiado!')).catch(()=>alert('Selecione manualmente.'));
-}
-
-function openAddTemplate() {
-  document.getElementById('mtpl-id').value='';
-  document.getElementById('mtpl-title').textContent='Novo modelo';
-  document.getElementById('mtpl-name').value='';
-  document.getElementById('mtpl-text').value='';
-  document.getElementById('mtpl-del-btn').style.display='none';
-  document.getElementById('modal-tpl').classList.add('open');
-}
-
-function openEditTpl(id) {
-  const t = templates.find(t=>t.id===id); if(!t) return;
-  document.getElementById('mtpl-id').value=t.id;
-  document.getElementById('mtpl-title').textContent='Editar modelo';
-  document.getElementById('mtpl-name').value=t.name;
-  document.getElementById('mtpl-text').value=t.text;
-  document.getElementById('mtpl-del-btn').style.display='inline-block';
-  document.getElementById('modal-tpl').classList.add('open');
-}
-
-function saveTpl() {
-  const id = document.getElementById('mtpl-id').value || 't'+Date.now();
-  const name = document.getElementById('mtpl-name').value.trim();
-  const text = document.getElementById('mtpl-text').value.trim();
-  if (!name||!text) return;
-  fsSave('templates', id, {id, name, text});
-  document.getElementById('modal-tpl').classList.remove('open');
-}
-
-function deleteTpl() {
-  const id = document.getElementById('mtpl-id').value;
-  if (!confirm('Excluir este modelo?')) return;
-  fsDel('templates', id);
-  document.getElementById('modal-tpl').classList.remove('open');
-}
-
-// ══════════════════════════════════════════════
-// ARTES (localStorage — imagens são grandes pra Firestore)
-// ══════════════════════════════════════════════
-function handleArtUpload(input) {
-  Array.from(input.files).forEach(file => {
-    const r = new FileReader();
-    r.onload = e => {
-      arts.push({id:'a'+Date.now()+Math.random(), name:file.name, data:e.target.result});
-      try { localStorage.setItem('cer_arts', JSON.stringify(arts)); } catch {}
-      renderArts();
-    };
-    r.readAsDataURL(file);
-  }); input.value='';
-}
-
-function renderArts() {
-  document.getElementById('art-grid').innerHTML = arts.map(a=>`
-    <div class="art-item"><img src="${a.data}" alt="${a.name}">
-      <div class="art-overlay">
-        <button onclick="dlArt('${a.id}')">Baixar</button>
-        <button onclick="delArt('${a.id}')">×</button>
-      </div>
-    </div>`).join('');
-}
-
-function dlArt(id){const a=arts.find(a=>a.id===id);if(!a)return;const l=document.createElement('a');l.href=a.data;l.download=a.name;l.click();}
-function delArt(id){arts=arts.filter(a=>a.id!==id);try{localStorage.setItem('cer_arts',JSON.stringify(arts));}catch{}renderArts();}
-
-// ══════════════════════════════════════════════
-// PROCESSOS
-// ══════════════════════════════════════════════
-const CATL  = {atend:'Atendimento',grupo:'Grupo',pos:'Pós-sessão',geral:'Geral'};
-const CATBG = {atend:'var(--infobg)',grupo:'var(--goldbg)',pos:'var(--sagebg)',geral:'var(--bg3)'};
-const CATC  = {atend:'var(--info)',grupo:'var(--gold)',pos:'var(--sage)',geral:'var(--text2)'};
-
-function renderProcesses() {
-  document.getElementById('process-list').innerHTML = processes.length
-    ? processes.map(p=>`
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:10px;position:relative;">
-          <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;background:${CATBG[p.cat]||CATBG.geral};color:${CATC[p.cat]||CATC.geral};margin-bottom:8px;">${CATL[p.cat]||p.cat}</span>
-          <div style="font-weight:500;font-size:14px;margin-bottom:6px;">${p.title}</div>
-          <div style="font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-wrap;">${p.desc}</div>
-          <div style="position:absolute;top:16px;right:16px;"><button class="btn btn-sm" onclick="openProcModal('${p.id}')">Editar</button></div>
-        </div>`).join('')
-    : '<div style="color:var(--text3);font-size:13px;">Nenhum processo cadastrado.</div>';
-}
-
-function openProcModal(id) {
-  const p = id ? processes.find(p=>p.id===id) : null;
-  document.getElementById('mproc-id').value = p ? p.id : '';
-  document.getElementById('mproc-title-label').textContent = p ? 'Editar processo' : 'Novo processo';
-  document.getElementById('mproc-title-inp').value = p ? p.title : '';
-  document.getElementById('mproc-cat').value = p ? p.cat : 'atend';
-  document.getElementById('mproc-desc').value = p ? p.desc : '';
-  document.getElementById('mproc-del-btn').style.display = p ? 'inline-block' : 'none';
-  document.getElementById('modal-proc').classList.add('open');
-}
-
-function saveProc() {
-  const id = document.getElementById('mproc-id').value || 'p'+Date.now();
-  const title = document.getElementById('mproc-title-inp').value.trim();
-  if (!title) return;
-  fsSave('processes', id, {id, title, cat: document.getElementById('mproc-cat').value, desc: document.getElementById('mproc-desc').value.trim()});
-  document.getElementById('modal-proc').classList.remove('open');
-}
-
-function deleteProc() {
-  const id = document.getElementById('mproc-id').value;
-  if (!confirm('Excluir este processo?')) return;
-  fsDel('processes', id);
-  document.getElementById('modal-proc').classList.remove('open');
-}
-
-// ══════════════════════════════════════════════
-// REUNIÕES
-// ══════════════════════════════════════════════
 function renderMeetings() {
-  const sorted = [...meetings].sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('meetings-list').innerHTML = sorted.length
-    ? sorted.map(m=>`
-        <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:12px;">
-          <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:12px;">
-            <div>
-              <div style="font-size:12px;color:var(--text3);">${new Date(m.date+'T00:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>
-              <div style="font-weight:500;font-size:15px;margin-top:2px;">${m.title}</div>
-            </div>
-            <button class="btn btn-sm" onclick="openMeetModal('${m.id}')">Editar</button>
-          </div>
-          <div style="font-size:13px;color:var(--text2);line-height:1.7;white-space:pre-wrap;">${m.content}</div>
-        </div>`).join('')
-    : '<div style="color:var(--text3);font-size:13px;">Nenhuma ata cadastrada.</div>';
+  const container = document.getElementById('meetings-list');
+  container.innerHTML = '';
+  
+  if (meetings.length === 0) {
+    container.innerHTML = '<div style="padding:40px 20px;text-align:center;color:var(--text3);font-size:13px;">Nenhuma reunião registrada ainda.</div>';
+    return;
+  }
+  
+  meetings.forEach((m, idx) => {
+    const card = document.createElement('div');
+    card.className = 'meeting-card';
+    
+    const dateObj = new Date(m.date + 'T00:00:00');
+    const dateStr = dateObj.toLocaleDateString('pt-BR', {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'});
+    
+    const preview = m.content.substring(0, 100) + (m.content.length > 100 ? '...' : '');
+    
+    card.innerHTML = `
+      <div class="meeting-card-header">
+        <div style="flex:1;" onclick="openMeetingModal(${idx})">
+          <div class="meeting-card-title">${m.title}</div>
+          <div class="meeting-card-date">${dateStr}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.4;">${preview}</div>
+        </div>
+        <div class="meeting-card-actions">
+          <button class="btn btn-sm" onclick="openMeetingModal(${idx})" title="Abrir">▶</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteMeeting(${idx})" title="Deletar">×</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
-function openMeetModal(id) {
-  const m = id ? meetings.find(m=>m.id===id) : null;
-  document.getElementById('mmeet-id').value = m ? m.id : '';
-  document.getElementById('mmeet-title-label').textContent = m ? 'Editar ata' : 'Nova ata';
-  document.getElementById('mmeet-date').value = m ? m.date : new Date().toISOString().split('T')[0];
-  document.getElementById('mmeet-title-inp').value = m ? m.title : '';
-  document.getElementById('mmeet-content').value = m ? m.content : '';
-  document.getElementById('mmeet-del-btn').style.display = m ? 'inline-block' : 'none';
-  document.getElementById('modal-meet').classList.add('open');
+function openNewMeetingModal() {
+  editingMeetingId = null;
+  document.getElementById('meeting-modal-title').textContent = 'Nova Reunião';
+  document.getElementById('meeting-title').value = '';
+  document.getElementById('meeting-date').value = new Date().toISOString().split('T')[0];
+  document.getElementById('meeting-content').value = '';
+  document.getElementById('delete-meeting-btn').style.display = 'none';
+  document.getElementById('modal-meeting').classList.add('open');
 }
 
-function saveMeet() {
-  const id = document.getElementById('mmeet-id').value || 'm'+Date.now();
-  const title = document.getElementById('mmeet-title-inp').value.trim();
-  if (!title) return;
-  fsSave('meetings', id, {id, date: document.getElementById('mmeet-date').value, title, content: document.getElementById('mmeet-content').value.trim()});
-  document.getElementById('modal-meet').classList.remove('open');
+function openMeetingModal(idx) {
+  editingMeetingId = idx;
+  const m = meetings[idx];
+  document.getElementById('meeting-modal-title').textContent = 'Editar Reunião';
+  document.getElementById('meeting-title').value = m.title;
+  document.getElementById('meeting-date').value = m.date;
+  document.getElementById('meeting-content').value = m.content;
+  document.getElementById('delete-meeting-btn').style.display = 'block';
+  document.getElementById('modal-meeting').classList.add('open');
 }
 
-function deleteMeet() {
-  const id = document.getElementById('mmeet-id').value;
-  if (!confirm('Excluir esta ata?')) return;
-  fsDel('meetings', id);
-  document.getElementById('modal-meet').classList.remove('open');
+function deleteMeeting(idx) {
+  if (confirm('Tem certeza que deseja deletar esta reunião?')) {
+    meetings.splice(idx, 1);
+    localStorage.setItem('meetings', JSON.stringify(meetings));
+    renderMeetings();
+  }
 }
 
-// ══════════════════════════════════════════════
-// REGRAS
-// ══════════════════════════════════════════════
-const RCOL = {gold:'var(--accent-dark)',sage:'var(--sage)',earth:'var(--earth)',danger:'var(--danger)',info:'var(--info)'};
-function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-function renderRegras() {
-  document.getElementById('regras-list').innerHTML = regras.length
-    ? regras.map(r=>`
-        <div class="rule-card" style="border-left-color:${RCOL[r.color]||RCOL.gold};" id="rc-${r.id}">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <input class="rule-title-edit" value="${esc(r.title)}" onblur="upRegra('${r.id}','title',this.value)" placeholder="Título...">
-            <select style="font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:3px 6px;color:var(--text3);flex-shrink:0;"
-              onchange="upRegra('${r.id}','color',this.value);document.getElementById('rc-${r.id}').style.borderLeftColor=RCOL[this.value]||RCOL.gold;">
-              ${Object.keys(RCOL).map(c=>`<option value="${c}"${r.color===c?' selected':''}>${c}</option>`).join('')}
-            </select>
-            <button class="btn btn-sm btn-danger" onclick="delRegra('${r.id}')" style="flex-shrink:0;">×</button>
-          </div>
-          <textarea class="rule-edit-area" onblur="upRegra('${r.id}','desc',this.value)" placeholder="Descrição...">${esc(r.desc)}</textarea>
-        </div>`).join('')
-    : '<div style="color:var(--text3);font-size:13px;">Nenhuma regra cadastrada.</div>';
+function deleteMeetingFromModal() {
+  if (editingMeetingId !== null && confirm('Tem certeza que deseja deletar esta reunião?')) {
+    meetings.splice(editingMeetingId, 1);
+    localStorage.setItem('meetings', JSON.stringify(meetings));
+    closeMeetingModal();
+    renderMeetings();
+  }
 }
 
-function upRegra(id, field, val) {
-  const r = regras.find(r=>r.id===id); if(!r) return;
-  fsSave('regras', id, {...r, [field]: val});
+function closeMeetingModal() {
+  document.getElementById('modal-meeting').classList.remove('open');
 }
 
-function delRegra(id) {
-  if (!confirm('Excluir esta regra?')) return;
-  fsDel('regras', id);
+function saveMeeting() {
+  const title = document.getElementById('meeting-title').value.trim();
+  const date = document.getElementById('meeting-date').value;
+  const content = document.getElementById('meeting-content').value.trim();
+  
+  if (!title || !date || !content) {
+    alert('Preencha todos os campos');
+    return;
+  }
+  
+  if (editingMeetingId !== null) {
+    meetings[editingMeetingId] = {id: meetings[editingMeetingId].id, title, date, content};
+  } else {
+    meetings.push({id: Date.now(), title, date, content});
+  }
+  
+  localStorage.setItem('meetings', JSON.stringify(meetings));
+  closeMeetingModal();
+  renderMeetings();
 }
 
-function addRegra() {
-  const id = 'r'+Date.now();
-  fsSave('regras', id, {id, title:'Nova regra', desc:'Descreva aqui...', color:'gold', _ord: Date.now()});
+// ---- RESPONSABILIDADES ----
+let responsibilities = JSON.parse(localStorage.getItem('responsibilities') || '[]');
+if (responsibilities.length === 0) {
+  responsibilities = [
+    {who:'Manuela', what:'Treinar todos na ferramenta de agendamento (reunião de amanhã) · coordenar grupo "Descobrindo Ayahuasca" · contato individual em até 48h para quem entra'},
+    {who:'Todos', what:'Disparos individuais diários · agendar mensagens semanais · gravar vídeo depoimento'},
+    {who:'A definir', what:'TikTok: criação e publicação (2x/semana)'},
+    {who:'A definir', what:'Atendimento individual no grupo Descobrindo'},
+  ];
+}
+let editingRespIndex = null;
+
+function renderResponsibilities() {
+  const container = document.getElementById('responsibilities-list');
+  container.innerHTML = '';
+  
+  if (responsibilities.length === 0) {
+    container.innerHTML = '<div style="padding:20px 0;text-align:center;color:var(--text3);font-size:13px;">Nenhuma responsabilidade adicionada.</div>';
+    return;
+  }
+  
+  responsibilities.forEach((r, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid;grid-template-columns:150px 1fr 80px;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);align-items:start;';
+    
+    const whoCell = document.createElement('div');
+    whoCell.innerHTML = `<span class="name-tag">${r.who}</span>`;
+    
+    const whatCell = document.createElement('div');
+    whatCell.style.cssText = 'font-size:13px;color:var(--text2);line-height:1.5;';
+    whatCell.textContent = r.what;
+    
+    const actionsCell = document.createElement('div');
+    actionsCell.style.cssText = 'display:flex;gap:4px;';
+    actionsCell.innerHTML = `
+      <button class="btn btn-sm" onclick="editResponsibility(${idx})" style="flex:1;">✎</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteResponsibility(${idx})" style="flex:1;">×</button>
+    `;
+    
+    row.appendChild(whoCell);
+    row.appendChild(whatCell);
+    row.appendChild(actionsCell);
+    container.appendChild(row);
+  });
 }
 
-// ══════════════════════════════════════════════
-// OVERLAY CLOSE
-// ══════════════════════════════════════════════
-document.querySelectorAll('.overlay').forEach(o => {
-  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
+function openAddResponsibilityModal() {
+  editingRespIndex = null;
+  document.getElementById('resp-modal-title').textContent = 'Nova Responsabilidade';
+  document.getElementById('resp-who').value = '';
+  document.getElementById('resp-what').value = '';
+  document.getElementById('modal-responsibility').classList.add('open');
+}
+
+function editResponsibility(idx) {
+  editingRespIndex = idx;
+  const r = responsibilities[idx];
+  document.getElementById('resp-modal-title').textContent = 'Editar Responsabilidade';
+  document.getElementById('resp-who').value = r.who;
+  document.getElementById('resp-what').value = r.what;
+  document.getElementById('modal-responsibility').classList.add('open');
+}
+
+function deleteResponsibility(idx) {
+  if (confirm('Tem certeza que deseja deletar esta responsabilidade?')) {
+    responsibilities.splice(idx, 1);
+    localStorage.setItem('responsibilities', JSON.stringify(responsibilities));
+    renderResponsibilities();
+  }
+}
+
+function closeResponsibilityModal() {
+  document.getElementById('modal-responsibility').classList.remove('open');
+}
+
+function saveResponsibility() {
+  const who = document.getElementById('resp-who').value.trim();
+  const what = document.getElementById('resp-what').value.trim();
+  if (!who || !what) return;
+  
+  if (editingRespIndex !== null) {
+    responsibilities[editingRespIndex] = {who, what};
+  } else {
+    responsibilities.push({who, what});
+  }
+  localStorage.setItem('responsibilities', JSON.stringify(responsibilities));
+  closeResponsibilityModal();
+  renderResponsibilities();
+}
+
+// ---- IDEIAS ----
+let ideas = JSON.parse(localStorage.getItem('ideas') || '[]');
+if (ideas.length === 0) {
+  ideas = [
+    {prazo:'curto', titulo:'Reativação da base fria — 230+ leads', desc:'Não envie convite direto. Envie mensagem reconhecendo que a casa mudou, que o grupo foi reestruturado, perguntando como a pessoa está. Quem responde positivamente é seu lead mais quente do momento, mesmo sendo "antigo". Use essa base também para pedir indicações de pessoas na nova cidade.'},
+    {prazo:'curto', titulo:'Ritual de boas-vindas no grupo "Descobrindo"', desc:'Quando alguém entra: dia 1 — mensagem de boas-vindas personalizada. Dia 2 — vídeo âncora explicando a medicina de forma acolhedora. Dia 3 — pergunta aberta: "o que te trouxe até aqui?". Essa pergunta sozinha abre conversas que nenhum funil automatizado consegue.'},
+    {prazo:'curto', titulo:'Roda de integração pós-sessão (72h depois)', desc:'Nas 72h após a cerimônia, a pessoa está mais aberta do que nunca. Uma chamada de Zoom ou grupo especial de WhatsApp com reflexões sobre o processo de integração é o que mais fideliza. Quem se sente acompanhado depois não só volta — indica.'},
+    {prazo:'medio', titulo:'SEO local — começa agora, colhe em 60–90 dias', desc:'Uma landing page simples com textos otimizados para "cerimônia de cura Caxias do Sul", "medicina ancestral Serra Gaúcha", "expansão de consciência Rio Grande do Sul". É o único canal que trabalha enquanto você dorme. FAQ + depoimentos + botão para WhatsApp já resolve.'},
+    {prazo:'medio', titulo:'Programa de embaixadores', desc:'Quem indicar alguém que efetivamente comparecer ganha algo simbólico: prioridade de vaga, conversa individual com o facilitador, material especial. Não precisa ser dinheiro. Cada participante tem um círculo de confiança que nenhum TikTok alcança.'},
+    {prazo:'medio', titulo:'Calendário de conteúdo temático', desc:'Temas fixos por dia: segunda = depoimento, quarta = educativo/desmistificação, sexta = reflexão espiritual. Cria expectativa no público, facilita a produção e constrói identidade reconhecível. Com o tempo, as pessoas passam a esperar pelo conteúdo de segunda.'},
+    {prazo:'medio', titulo:'Segmentação dos grupos', desc:'Grupo principal (comunidade ativa), "Descobrindo" (quem está chegando) e lista de transmissão para leads que demonstraram interesse mas ainda não foram. Cada público precisa de linguagem diferente. Falar para todos ao mesmo tempo dilui a mensagem.'},
+    {prazo:'longo', titulo:'Parcerias locais', desc:'Psicólogos, terapeutas, professores de yoga e espaços de meditação em Caxias do Sul têm clientes no perfil do seu público. Uma conversa honesta com dois ou três desses profissionais pode gerar fluxo constante de indicações qualificadas. Não é venda, é rede de confiança.'},
+    {prazo:'longo', titulo:'Métricas simples semanais', desc:'Três números toda semana: (1) quantas pessoas novas entraram no "Descobrindo", (2) quantas receberam contato individual, (3) quantas confirmaram presença. Se entram muitos mas poucos recebem contato → gargalo é atendimento. Se recebem contato mas não confirmam → gargalo é a oferta.'},
+  ];
+}
+let editingIdeaIndex = null;
+
+function renderIdeas() {
+  const container = document.getElementById('ideas-container');
+  container.innerHTML = '';
+  ideas.forEach((idea, idx) => {
+    const tagClass = {curto:'it-curto', medio:'it-medio', longo:'it-longo'}[idea.prazo];
+    const tagText = {curto:'Curto prazo', medio:'Médio prazo', longo:'Longo prazo'}[idea.prazo];
+    const card = document.createElement('div');
+    card.className = 'idea-card';
+    card.style.position = 'relative';
+    card.innerHTML = `
+      <span class="idea-tag ${tagClass}">${tagText}</span>
+      <h4>${idea.titulo}</h4>
+      <p>${idea.desc}</p>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button class="btn btn-sm" onclick="editIdea(${idx})">✎ Editar</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteIdea(${idx})">× Deletar</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function openAddIdeaModal() {
+  editingIdeaIndex = null;
+  document.getElementById('idea-modal-title').textContent = 'Nova Ideia';
+  document.getElementById('idea-prazo').value = 'curto';
+  document.getElementById('idea-titulo').value = '';
+  document.getElementById('idea-desc').value = '';
+  document.getElementById('modal-idea').classList.add('open');
+}
+
+function editIdea(idx) {
+  editingIdeaIndex = idx;
+  const idea = ideas[idx];
+  document.getElementById('idea-modal-title').textContent = 'Editar Ideia';
+  document.getElementById('idea-prazo').value = idea.prazo;
+  document.getElementById('idea-titulo').value = idea.titulo;
+  document.getElementById('idea-desc').value = idea.desc;
+  document.getElementById('modal-idea').classList.add('open');
+}
+
+function deleteIdea(idx) {
+  if (confirm('Tem certeza que deseja deletar esta ideia?')) {
+    ideas.splice(idx, 1);
+    localStorage.setItem('ideas', JSON.stringify(ideas));
+    renderIdeas();
+  }
+}
+
+function closeIdeaModal() {
+  document.getElementById('modal-idea').classList.remove('open');
+}
+
+function saveIdea() {
+  const prazo = document.getElementById('idea-prazo').value;
+  const titulo = document.getElementById('idea-titulo').value.trim();
+  const desc = document.getElementById('idea-desc').value.trim();
+  if (!titulo || !desc) return;
+  
+  if (editingIdeaIndex !== null) {
+    ideas[editingIdeaIndex] = {prazo, titulo, desc};
+  } else {
+    ideas.push({prazo, titulo, desc});
+  }
+  localStorage.setItem('ideas', JSON.stringify(ideas));
+  closeIdeaModal();
+  renderIdeas();
+}
+
+// close modals on overlay click
+document.getElementById('modal-task').addEventListener('click', function(e) { if(e.target===this) closeModal(); });
+document.getElementById('modal-edit-rule').addEventListener('click', function(e) { if(e.target===this) closeEditRuleModal(); });
+document.getElementById('modal-edit-notice').addEventListener('click', function(e) { if(e.target===this) closeEditNoticeModal(); });
+document.getElementById('modal-idea').addEventListener('click', function(e) { if(e.target===this) closeIdeaModal(); });
+document.getElementById('modal-responsibility').addEventListener('click', function(e) { if(e.target===this) closeResponsibilityModal(); });
+document.getElementById('modal-meeting').addEventListener('click', function(e) { 
+  if(e.target === this || e.target === document.getElementById('modal-meeting')) {
+    closeMeetingModal();
+  }
+});
+
+// Fechar modals com ESC
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const modals = document.querySelectorAll('.modal-overlay.open');
+    if (modals.length > 0) {
+      const lastModal = modals[modals.length - 1];
+      if (lastModal.id === 'modal-task') closeModal();
+      else if (lastModal.id === 'modal-edit-rule') closeEditRuleModal();
+      else if (lastModal.id === 'modal-edit-notice') closeEditNoticeModal();
+      else if (lastModal.id === 'modal-idea') closeIdeaModal();
+      else if (lastModal.id === 'modal-responsibility') closeResponsibilityModal();
+      else if (lastModal.id === 'modal-meeting') closeMeetingModal();
+    }
+  }
 });
 </script>
+
 </body>
 </html>
